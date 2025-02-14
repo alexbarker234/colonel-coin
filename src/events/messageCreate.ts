@@ -1,10 +1,9 @@
-import { Message } from "discord.js";
-// import { getUser, manageXP } from "@/utils/user";
 import BotClient from "@/structures/BotClient";
+import { getUser } from "@/utils/user";
+import { Message } from "discord.js";
 
 module.exports = async (client: BotClient, message: Message) => {
     if (message.author.bot) return;
 
-    // let dbUser = await getUser(message.author);
-    // dbUser = await manageXP(dbUser);
+    const user = await getUser(message.author.id);  
 };
