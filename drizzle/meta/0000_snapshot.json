@@ -1,105 +1,94 @@
 {
-  "id": "1b2b915c-7c0d-47ad-b353-6c3c4b6533e3",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "7",
-  "dialect": "postgresql",
-  "tables": {
-    "public.debts": {
-      "name": "debts",
-      "schema": "",
-      "columns": {
-        "creditor_id": {
-          "name": "creditor_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
+    "id": "1b2b915c-7c0d-47ad-b353-6c3c4b6533e3",
+    "prevId": "00000000-0000-0000-0000-000000000000",
+    "version": "7",
+    "dialect": "postgresql",
+    "tables": {
+        "public.debts": {
+            "name": "debts",
+            "schema": "",
+            "columns": {
+                "creditor_id": {
+                    "name": "creditor_id",
+                    "type": "varchar",
+                    "primaryKey": false,
+                    "notNull": true
+                },
+                "debtor_id": {
+                    "name": "debtor_id",
+                    "type": "varchar",
+                    "primaryKey": false,
+                    "notNull": true
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {
+                "debts_creditor_id_users_id_fk": {
+                    "name": "debts_creditor_id_users_id_fk",
+                    "tableFrom": "debts",
+                    "tableTo": "users",
+                    "columnsFrom": ["creditor_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                },
+                "debts_debtor_id_users_id_fk": {
+                    "name": "debts_debtor_id_users_id_fk",
+                    "tableFrom": "debts",
+                    "tableTo": "users",
+                    "columnsFrom": ["debtor_id"],
+                    "columnsTo": ["id"],
+                    "onDelete": "no action",
+                    "onUpdate": "no action"
+                }
+            },
+            "compositePrimaryKeys": {
+                "debts_creditor_id_debtor_id_pk": {
+                    "name": "debts_creditor_id_debtor_id_pk",
+                    "columns": ["creditor_id", "debtor_id"]
+                }
+            },
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
         },
-        "debtor_id": {
-          "name": "debtor_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
+        "public.users": {
+            "name": "users",
+            "schema": "",
+            "columns": {
+                "id": {
+                    "name": "id",
+                    "type": "varchar",
+                    "primaryKey": true,
+                    "notNull": true
+                },
+                "balance": {
+                    "name": "balance",
+                    "type": "integer",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": 0
+                }
+            },
+            "indexes": {},
+            "foreignKeys": {},
+            "compositePrimaryKeys": {},
+            "uniqueConstraints": {},
+            "policies": {},
+            "checkConstraints": {},
+            "isRLSEnabled": false
         }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "debts_creditor_id_users_id_fk": {
-          "name": "debts_creditor_id_users_id_fk",
-          "tableFrom": "debts",
-          "tableTo": "users",
-          "columnsFrom": [
-            "creditor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "debts_debtor_id_users_id_fk": {
-          "name": "debts_debtor_id_users_id_fk",
-          "tableFrom": "debts",
-          "tableTo": "users",
-          "columnsFrom": [
-            "debtor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "debts_creditor_id_debtor_id_pk": {
-          "name": "debts_creditor_id_debtor_id_pk",
-          "columns": [
-            "creditor_id",
-            "debtor_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
     },
-    "public.users": {
-      "name": "users",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "balance": {
-          "name": "balance",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    }
-  },
-  "enums": {},
-  "schemas": {},
-  "sequences": {},
-  "roles": {},
-  "policies": {},
-  "views": {},
-  "_meta": {
-    "columns": {},
+    "enums": {},
     "schemas": {},
-    "tables": {}
-  }
+    "sequences": {},
+    "roles": {},
+    "policies": {},
+    "views": {},
+    "_meta": {
+        "columns": {},
+        "schemas": {},
+        "tables": {}
+    }
 }

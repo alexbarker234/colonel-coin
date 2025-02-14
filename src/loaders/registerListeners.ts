@@ -7,8 +7,8 @@ export default (client: BotClient) => {
     const eventFiles = fs.readdirSync(path);
     for (const eventFile of eventFiles) {
         const event = require(`${path}/${eventFile}`);
-        const eventName = eventFile.split('.')[0];
-        client.on(eventName, event.bind(null, client))
+        const eventName = eventFile.split(".")[0];
+        client.on(eventName, event.bind(null, client));
         console.log(`Registered event listener: ${eventName}`);
     }
 };

@@ -8,16 +8,28 @@ module.exports = {
         // Get count of real users in guild
         const guild = interaction.guild;
         if (!guild) {
-            await interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
+            await interaction.reply({
+                content: "This command can only be used in a server.",
+                ephemeral: true
+            });
             return;
         }
         const members = await guild.members.fetch();
         const humanCount = members.filter((member) => !member.user.bot).size;
 
         // build embed
-        const embed = new EmbedBuilder().setTitle(`${emojis.chip} Coin Check ${emojis.chip}`).setDescription(`${humanCount} people need to accept this coin check`).setColor("#FFD700");
-        const acceptButton = new ButtonBuilder().setCustomId("accept_coincheck").setLabel("Accept").setStyle(ButtonStyle.Success);
-        const rejectButton = new ButtonBuilder().setCustomId("reject_coincheck").setLabel("Reject").setStyle(ButtonStyle.Danger);
+        const embed = new EmbedBuilder()
+            .setTitle(`${emojis.chip} Coin Check ${emojis.chip}`)
+            .setDescription(`${humanCount} people need to accept this coin check`)
+            .setColor("#FFD700");
+        const acceptButton = new ButtonBuilder()
+            .setCustomId("accept_coincheck")
+            .setLabel("Accept")
+            .setStyle(ButtonStyle.Success);
+        const rejectButton = new ButtonBuilder()
+            .setCustomId("reject_coincheck")
+            .setLabel("Reject")
+            .setStyle(ButtonStyle.Danger);
         const row = new ActionRowBuilder().addComponents(acceptButton, rejectButton);
 
         // in memory storage
@@ -30,11 +42,12 @@ module.exports = {
         const response = await interaction.reply({
             embeds: [initialEmbed],
             components: [row],
-            fetchReply: true,
+            fetchReply: true
         });
 
-
-        const collector = response.createMessageComponentCollector({ time: 1000 * 60 * 60  });
+        const collector = response.createMessageComponentCollector({
+            time: 1000 * 60 * 60
+        });
 
         collector.on("collect", async (i) => {
             // MANAGE ACCEPTANCE
@@ -43,27 +56,31 @@ module.exports = {
                 await i.deferUpdate();
 
                 const updatedEmbed = EmbedBuilder.from(embed).setDescription(
-                    `${acceptedUsers.size}/${humanCount} people have accepted\n\nAccepted by:\n${Array.from(acceptedUsers)
+                    `${acceptedUsers.size}/${humanCount} people have accepted\n\nAccepted by:\n${Array.from(
+                        acceptedUsers
+                    )
                         .map((id) => `<@${id}>`)
                         .join("\n")}`
                 );
 
                 await interaction.editReply({
                     embeds: [updatedEmbed],
-                    components: [row],
+                    components: [row]
                 });
 
                 if (acceptedUsers.size >= humanCount) {
                     collector.stop();
                     const finalEmbed = EmbedBuilder.from(updatedEmbed).setDescription(
-                        `Coin check complete! All ${humanCount} people have accepted.\n\nAccepted by:\n${Array.from(acceptedUsers)
+                        `Coin check complete! All ${humanCount} people have accepted.\n\nAccepted by:\n${Array.from(
+                            acceptedUsers
+                        )
                             .map((id) => `<@${id}>`)
                             .join("\n")}`
                     );
 
                     await interaction.editReply({
                         embeds: [finalEmbed],
-                        components: [],
+                        components: []
                     });
                 }
             }
@@ -76,19 +93,19 @@ module.exports = {
 
                 await interaction.editReply({
                     embeds: [rejectedEmbed],
-                    components: [],
+                    components: []
                 });
             }
         });
 
         collector.on("end", (collected, reason) => {
             if (reason === "time") {
-                const timeoutEmbed = EmbedBuilder.from(embed).setDescription("Coin check timed out after 1 minute.");
+                const timeoutEmbed = EmbedBuilder.from(embed).setDescription("Coin check timed out.");
                 interaction.editReply({
                     embeds: [timeoutEmbed],
-                    components: [],
+                    components: []
                 });
             }
         });
-    },
+    }
 };

@@ -14,7 +14,7 @@ global.src = path.resolve(__dirname);
 console.log("Bot is starting...");
 
 const client = new BotClient({
-    intents: ["Guilds", "GuildMessages", "GuildMembers"],
+    intents: ["Guilds", "GuildMessages", "GuildMembers"]
 });
 
 registerCommands(client);

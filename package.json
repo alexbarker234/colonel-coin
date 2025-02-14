@@ -7,7 +7,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "generate": "drizzle-kit generate",
         "migrate": "drizzle-kit migrate",
-        "studio": "drizzle-kit studio"
+        "studio": "drizzle-kit studio",
+        "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
     },
     "author": "",
     "license": "ISC",

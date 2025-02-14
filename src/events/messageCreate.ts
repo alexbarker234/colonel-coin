@@ -5,5 +5,5 @@ import { Message } from "discord.js";
 module.exports = async (client: BotClient, message: Message) => {
     if (message.author.bot) return;
 
-    const user = await getUser(message.author.id);  
+    const user = await getUser(message.author.id);
 };

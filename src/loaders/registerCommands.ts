@@ -9,7 +9,9 @@ export default (client: BotClient) => {
 
     const commandDirs = fs.readdirSync(global.src + "/commands/");
     for (const dirName of commandDirs) {
-        const commandFiles = fs.readdirSync(global.src + "/commands/" + dirName + "/").filter((file: string) => file.endsWith(".ts"));
+        const commandFiles = fs
+            .readdirSync(global.src + "/commands/" + dirName + "/")
+            .filter((file: string) => file.endsWith(".ts"));
         for (const file of commandFiles) {
             const command: SlashCommand = require(global.src + "/commands/" + dirName + "/" + `${file}`);
 
@@ -34,9 +36,13 @@ function registerCommands(commandsJSON: RESTPostAPIChatInputApplicationCommandsJ
 
             let data: any;
             if (process.env.GUILD_ID) {
-                data = await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID || "", process.env.GUILD_ID), { body: commandsJSON });
-                console.log(`Reloading commands for ${process.env.GUILD_ID} only`)
-            } else data = await rest.put(Routes.applicationCommands(process.env.CLIENT_ID || ""), { body: commandsJSON });
+                data = await rest.put(
+                    Routes.applicationGuildCommands(process.env.CLIENT_ID || "", process.env.GUILD_ID),
+                    { body: commandsJSON }
+                );
+                console.log(`Reloading commands for ${process.env.GUILD_ID} only`);
+            } else
+                data = await rest.put(Routes.applicationCommands(process.env.CLIENT_ID || ""), { body: commandsJSON });
 
             console.log(`Successfully reloaded ${data.length} application (/) commands.`);
         } catch (error) {

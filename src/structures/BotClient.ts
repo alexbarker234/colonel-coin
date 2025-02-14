@@ -1,4 +1,4 @@
-import { Client, ClientOptions, Collection} from "discord.js";
+import { Client, ClientOptions, Collection } from "discord.js";
 import { SlashCommand } from "@/types";
 
 export default class BotClient extends Client {
