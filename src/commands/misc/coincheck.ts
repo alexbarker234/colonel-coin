@@ -33,7 +33,8 @@ module.exports = {
             fetchReply: true,
         });
 
-        const collector = response.createMessageComponentCollector({ time: 60000 });
+
+        const collector = response.createMessageComponentCollector({ time: 1000 * 60 * 60  });
 
         collector.on("collect", async (i) => {
             // MANAGE ACCEPTANCE
