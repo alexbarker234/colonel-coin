@@ -1,9 +1,10 @@
-import dotenv from "dotenv";
-import path from "path";
-import BotClient from "@/structures/BotClient";
 import registerCommands from "@/loaders/registerCommands";
 import registerListeners from "@/loaders/registerListeners";
-import keepAlive from "./server";
+import BotClient from "@/structures/BotClient";
+import dotenv from "dotenv";
+import path from "path";
+import registerSchedules from "./loaders/registerSchedules";
+//import keepAlive from "./server";
 
 dotenv.config();
 
@@ -19,9 +20,7 @@ const client = new BotClient({
 
 registerCommands(client);
 registerListeners(client);
-
-// todo database
-
-keepAlive();
+registerSchedules(client);
+// keepAlive(); // this is for replit
 
 client.login(token);
