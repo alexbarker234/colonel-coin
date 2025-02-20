@@ -1,20 +1,25 @@
 import BotClient from "@/structures/BotClient";
+import { sendBounty } from "@/utils/bounties";
+import cron from "node-cron";
 
 export default (client: BotClient) => {
-    const guilds = client.guilds.cache;
+    // at 12AM every 2 days choose a random time on that day to send the bounty
+    cron.schedule("0 0 */2 * *", () => {
+        const randomTime = Math.floor(Math.random() * 24 * 60 * 60 * 1000);
 
-    // Schedule a message to be sent at 12:00 PM daily
-    // cron.schedule("0 12 * * *", () => {
-    //     // Find all servers
+        // DEBUG - LOG TIME
+        const hours = Math.floor(randomTime / (60 * 60 * 1000));
+        const minutes = Math.floor((randomTime % (60 * 60 * 1000)) / (60 * 1000));
+        const ampm = hours >= 12 ? "PM" : "AM";
+        const formattedHours = hours % 12 || 12;
+        console.log(`The bounty will be sent at ${formattedHours}:${minutes.toString().padStart(2, "0")} ${ampm}`);
 
-    //     for (const guild of guilds) {
-    //         // currently just using the first text channel found
-    //         const channel = guild[1].channels.cache.find((c) => c.isTextBased());
-    //         if (!channel) {
-    //             console.log(`No text channel found in ${guild[1].name}`);
-    //             continue;
-    //         }
-    //         channel.send("This is your scheduled 12 PM message!");
-    //     }
-    // });
+        setTimeout(() => {
+            try {
+                sendBounty(client);
+            } catch (error) {
+                console.error(error);
+            }
+        }, randomTime);
+    });
 };

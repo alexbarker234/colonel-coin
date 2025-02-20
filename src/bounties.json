@@ -1,0 +1,141 @@
+[
+    {
+        "id": 0,
+        "description": "First to purchase a product from an IGA"
+    },
+    {
+        "id": 1,
+        "description": "First to consume a pineapple or at least parts of one"
+    },
+    {
+        "id": 2,
+        "description": "First to enter a public library"
+    },
+    {
+        "id": 3,
+        "description": "First to locate apple weighing over 210g"
+    },
+    {
+        "id": 4,
+        "description": "First to locate a physical print item containing 420 in the text (e.g. a receipt or serial number)"
+    },
+    {
+        "id": 5,
+        "description": "First to photograph a car over $200k AUD retail value"
+    },
+    {
+        "id": 6,
+        "description": "First to take a picture of another players house"
+    },
+    {
+        "id": 7,
+        "description": "First to get away with saying \"pingus\" in front of the other players"
+    },
+    {
+        "id": 8,
+        "description": "First to consume both a caffeinated and an alcoholic beverage"
+    },
+    {
+        "id": 9,
+        "description": "First to get exactly 4km away from Kings park DNA tower"
+    },
+    {
+        "id": 10,
+        "description": "First to find a rare creature worthy of approval from other players"
+    },
+    {
+        "id": 11,
+        "description": "First to physically break something"
+    },
+    {
+        "id": 12,
+        "description": "First to collect 22 blue M&Ms"
+    },
+    {
+        "id": 13,
+        "description": "First to plant a playing card on another player and have it stick until another player can verify it"
+    },
+    {
+        "id": 14,
+        "description": "First to email the other players an investment opportunity pitch"
+    },
+    {
+        "id": 15,
+        "description": "First to utilise Barbecue sauce"
+    },
+    {
+        "id": 16,
+        "description": "Last player to equip thongs looses 20 chips",
+        "negative": true
+    },
+    {
+        "id": 17,
+        "description": "Last player to wake up next looses 20 chips",
+        "negative": true
+    },
+    {
+        "id": 18,
+        "description": "Last player to visit a post office looses 20 chips",
+        "negative": true
+    },
+    {
+        "id": 19,
+        "description": "Last player to consume a green beverage looses 20 chips",
+        "negative": true
+    },
+    {
+        "id": 20,
+        "description": "Worst submitted digital art piece looses 20 chips",
+        "negative": true
+    },
+    {
+        "id": 21,
+        "description": "20 chips to whoever majority of players agree to give chips too if it fails all players loose 10 chips",
+        "wildcard": true
+    },
+    {
+        "id": 22,
+        "description": "Most bets lost gets 20 chips",
+        "wildcard": true
+    },
+    {
+        "id": 23,
+        "description": "Majority of players must agree on a player to loose 10 chips if no consensus is reached all players loose 15 chips",
+        "wildcard": true
+    },
+    {
+        "id": 24,
+        "description": "The two poorest players form an alliance and will receive full payment of any bounties (positive or negative) won by either party in the team for the next 4 days",
+        "wildcard": true
+    },
+    {
+        "id": 25,
+        "description": "whoever is willing to pay the other players the most chips (cumulative) gets 50 chips (doesn't have to be even payment between players)",
+        "wildcard": true
+    },
+    {
+        "id": 26,
+        "description": "The dealer - the richest player gains a dealer token. At the end of the next meet whoever holds the token deals out 10 chips to all other players. Passing the token isn't accusable",
+        "wildcard": true
+    },
+    {
+        "id": 27,
+        "description": "The small blind - the poorest player gains a small blind token. At the end of the next meet whoever holds the token gains 20 chips from the bank. Stealing the token isn't accusable",
+        "wildcard": true
+    },
+    {
+        "id": 28,
+        "description": "The button. Winner gets 10 chips from the loser",
+        "wildcard": true
+    },
+    {
+        "id": 29,
+        "description": "Random colour of chips is selected to become counterfeit chips worth -1 giving them to another player isn't an accusable event",
+        "wildcard": true
+    },
+    {
+        "id": 30,
+        "description": "Next 2 \"bring most chips to a hangout\" bonus paid by the bank are 3x the usual amount",
+        "wildcard": true
+    }
+]
