@@ -66,7 +66,7 @@ const createBountyEmbed = (bounty: Bounty) => {
     }
 
     return new EmbedBuilder()
-        .setTitle("🎯 New Bounty!")
+        .setTitle(bounty.wildcard ? "🎲New Wildcard Bounty!" : "🎯 New Bounty!")
         .setDescription(bounty.description)
         .setColor(color)
         .setTimestamp();
@@ -74,7 +74,8 @@ const createBountyEmbed = (bounty: Bounty) => {
 
 const chooseBounty = async (): Promise<Bounty> => {
     const bountiesJSON = require("../bounties.json");
-    const regularBounties = bountiesJSON.filter((b: any) => !b.wildcard);
+    const isWildcard = Math.random() < 0.5;
+    const regularBounties = bountiesJSON.filter((b: any) => (isWildcard ? b.wildcard : !b.wildcard));
 
     // Get all previously used bounty IDs from the database
     const usedBounties = await db.select().from(bounties);
@@ -85,9 +86,9 @@ const chooseBounty = async (): Promise<Bounty> => {
     const availableBounties = regularBounties.filter((b: any) => !usedBountyIds.has(b.id));
 
     // If all bounties have been used, reset by using all regular bounties
-    const bountyPool = availableBounties.length > 0 ? availableBounties : regularBounties;
+    const filteredPool = availableBounties.length > 0 ? availableBounties : regularBounties;
 
-    const randomBounty = bountyPool[Math.floor(Math.random() * bountyPool.length)];
+    const randomBounty = filteredPool[Math.floor(Math.random() * filteredPool.length)];
 
     return {
         id: randomBounty.id,
