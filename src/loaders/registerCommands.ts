@@ -1,7 +1,7 @@
 import BotClient from "@/structures/BotClient";
-import fs from "fs";
-import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
 import { SlashCommand } from "@/types";
+import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
+import fs from "fs";
 
 export default (client: BotClient) => {
     // WHAAAAT THE HECK ISS THISS NAMMMMEE????>!!
@@ -16,6 +16,10 @@ export default (client: BotClient) => {
             const command: SlashCommand = require(global.src + "/commands/" + dirName + "/" + `${file}`);
 
             //command.type = dirName;
+            if (command.debug && !process.env.DEBUG) {
+                console.log(`[DEBUG] Skipping command ${command.data.name} because DEBUG is not set in .env`);
+                continue;
+            }
 
             if ("data" in command && "execute" in command) {
                 commandsJSON.push(command.data.toJSON());

@@ -4,4 +4,5 @@ export interface SlashCommand {
     data: SlashCommandBuilder;
     type?: string;
     execute: (interaction: CommandInteraction) => Promise<void>;
+    debug?: boolean;
 }

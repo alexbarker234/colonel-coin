@@ -1,7 +1,7 @@
 import { db } from "@/database/db";
 import { bounties, guildSettings } from "@/database/schema";
 import BotClient from "@/structures/BotClient";
-import { ColorResolvable, EmbedBuilder, Guild } from "discord.js";
+import { EmbedBuilder, Guild } from "discord.js";
 import { isNotNull } from "drizzle-orm";
 
 interface Bounty {
@@ -9,6 +9,8 @@ interface Bounty {
     description: string;
     wildcard?: boolean;
     negative?: boolean;
+    reward?: string;
+    penalty?: string;
 }
 
 export const sendBounty = async (client: BotClient) => {
@@ -57,36 +59,72 @@ export const sendBounty = async (client: BotClient) => {
     });
 };
 
-const createBountyEmbed = (bounty: Bounty) => {
-    let color: ColorResolvable = "#3498db"; // Default blue
+export const createBountyEmbed = (bounty: Bounty) => {
+    console.log(bounty);
+    const embed = new EmbedBuilder()
+        .setTitle("🎯 New Bounty!")
+        .setDescription(bounty.description)
+        .setColor("#3498db")
+        .setTimestamp();
+
+    if (bounty.wildcard) {
+        embed.setTitle("🎲 New Wildcard Bounty!");
+        embed.setColor("#9b59b6");
+    }
     if (bounty.negative) {
-        color = "#e74c3c"; // Red
-    } else if (bounty.wildcard) {
-        color = "#9b59b6"; // Purple
+        embed.setTitle("🚫 New Penalty Bounty!");
+        embed.setColor("#e74c3c");
     }
 
-    return new EmbedBuilder()
-        .setTitle(bounty.wildcard ? "🎲New Wildcard Bounty!" : "🎯 New Bounty!")
-        .setDescription(bounty.description)
-        .setColor(color)
-        .setTimestamp();
+    if (bounty.reward) {
+        embed.addFields({
+            name: "Reward",
+            value: bounty.reward,
+            inline: true
+        });
+    }
+    if (bounty.penalty) {
+        embed.addFields({
+            name: "Penalty",
+            value: bounty.penalty,
+            inline: true
+        });
+    }
+
+    return embed;
 };
 
-const chooseBounty = async (): Promise<Bounty> => {
+export const chooseBounty = async (): Promise<Bounty> => {
     const bountiesJSON = require("../bounties.json");
-    const isWildcard = Math.random() < 0.5;
-    const regularBounties = bountiesJSON.filter((b: any) => (isWildcard ? b.wildcard : !b.wildcard));
 
     // Get all previously used bounty IDs from the database
     const usedBounties = await db.select().from(bounties);
-
     const usedBountyIds = new Set(usedBounties.map((b) => b.id));
 
-    // Filter out previously used bounties
-    const availableBounties = regularBounties.filter((b: any) => !usedBountyIds.has(b.id));
+    // Check available bounties of each type
+    const availableWildcards = bountiesJSON.filter((b: any) => b.wildcard && !usedBountyIds.has(b.id));
+    const availableNormal = bountiesJSON.filter((b: any) => !b.wildcard && !usedBountyIds.has(b.id));
 
-    // If all bounties have been used, reset by using all regular bounties
-    const filteredPool = availableBounties.length > 0 ? availableBounties : regularBounties;
+    // Determine which type to use based on availability
+    let isWildcard = false;
+    if (availableWildcards.length === 0 && availableNormal.length === 0) {
+        // If all bounties used, randomly choose from all bounties
+        isWildcard = Math.random() < 0.5;
+    } else if (availableWildcards.length === 0) {
+        // No wildcards left, always use normal
+        isWildcard = false;
+    } else if (availableNormal.length === 0) {
+        // No normal bounties left, always use wildcard
+        isWildcard = true;
+    } else {
+        // Otherwise 50/50
+        isWildcard = Math.random() < 0.5;
+    }
+
+    // TODO simplify this by using previous filter probs
+    const bountyPool = bountiesJSON.filter((b: any) => (isWildcard ? b.wildcard : !b.wildcard));
+    const availableBounties = bountyPool.filter((b: any) => !usedBountyIds.has(b.id));
+    const filteredPool = availableBounties.length > 0 ? availableBounties : bountyPool;
 
     const randomBounty = filteredPool[Math.floor(Math.random() * filteredPool.length)];
 
@@ -94,6 +132,8 @@ const chooseBounty = async (): Promise<Bounty> => {
         id: randomBounty.id,
         description: randomBounty.description,
         wildcard: randomBounty.wildcard,
-        negative: randomBounty.negative
+        negative: randomBounty.negative,
+        reward: randomBounty.reward,
+        penalty: randomBounty.penalty
     };
 };

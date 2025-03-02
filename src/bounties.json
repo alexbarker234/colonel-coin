@@ -1,107 +1,131 @@
 [
     {
         "id": 0,
-        "description": "First to purchase a product from an IGA"
+        "description": "First to purchase a product from an IGA",
+        "reward": "10 chips"
     },
     {
         "id": 1,
-        "description": "First to consume a pineapple or at least parts of one"
+        "description": "First to consume some pineapple",
+        "reward": "10 chips"
     },
     {
         "id": 2,
-        "description": "First to enter a public library"
+        "description": "First to enter a public library",
+        "reward": "10 chips"
     },
     {
         "id": 3,
-        "description": "First to locate apple weighing over 210g"
+        "description": "First to locate apple weighing over 210g",
+        "reward": "10 chips"
     },
     {
         "id": 4,
-        "description": "First to locate a physical print item containing 420 in the text (e.g. a receipt or serial number)"
+        "description": "First to locate a physical print item containing 420 in the text (e.g. a receipt or serial number)",
+        "reward": "10 chips"
     },
     {
         "id": 5,
-        "description": "First to photograph a car over $200k AUD retail value"
+        "description": "First to photograph a car over $200k AUD retail value",
+        "reward": "10 chips"
     },
     {
         "id": 6,
-        "description": "First to take a picture of another players house"
+        "description": "First to take a picture of another players house",
+        "reward": "10 chips"
     },
     {
         "id": 7,
-        "description": "First to get away with saying \"pingus\" in front of the other players"
+        "description": "First to successfully get another player with any sort of two part joke such as updog",
+        "reward": "10 chips"
     },
     {
         "id": 8,
-        "description": "First to consume both a caffeinated and an alcoholic beverage"
+        "description": "First to consume both a caffeinated and an alcoholic beverage",
+        "reward": "10 chips"
     },
     {
         "id": 9,
-        "description": "First to get exactly 4km away from Kings park DNA tower"
+        "description": "First to get exactly 4km away from Kings park DNA tower",
+        "reward": "10 chips"
     },
     {
         "id": 10,
-        "description": "First to find a rare creature worthy of approval from other players"
+        "description": "First to find a rare creature worthy of approval from other players",
+        "reward": "10 chips"
     },
     {
         "id": 11,
-        "description": "First to physically break something"
+        "description": "First to physically break something",
+        "reward": "10 chips"
     },
     {
         "id": 12,
-        "description": "First to collect 22 blue M&Ms"
+        "description": "First to collect 22 blue M&Ms",
+        "reward": "10 chips"
     },
     {
         "id": 13,
-        "description": "First to plant a playing card on another player and have it stick until another player can verify it"
+        "description": "First to plant a playing card on another player and have it stick until another player can verify it",
+        "reward": "10 chips"
     },
     {
         "id": 14,
-        "description": "First to email the other players an investment opportunity pitch"
+        "description": "First to email the other players an investment opportunity pitch",
+        "reward": "10 chips"
     },
     {
         "id": 15,
-        "description": "First to utilise Barbecue sauce"
+        "description": "First to utilise Barbecue sauce",
+        "reward": "10 chips"
     },
     {
         "id": 16,
-        "description": "Last player to equip thongs looses 20 chips",
-        "negative": true
+        "description": "Last player to equip thongs pays the bank",
+        "negative": true,
+        "penalty": "-10 chips"
     },
     {
         "id": 17,
-        "description": "Last player to wake up next looses 20 chips",
-        "negative": true
+        "description": "Last player to wake up next pays the bank",
+        "negative": true,
+        "penalty": "-10 chips"
     },
     {
         "id": 18,
-        "description": "Last player to visit a post office looses 20 chips",
-        "negative": true
+        "description": "Last player to visit a post office pays the bank",
+        "negative": true,
+        "penalty": "-10 chips"
     },
     {
         "id": 19,
-        "description": "Last player to consume a green beverage looses 20 chips",
-        "negative": true
+        "description": "Last player to consume a green beverage pays the bank",
+        "negative": true,
+        "penalty": "-10 chips"
     },
     {
         "id": 20,
-        "description": "Worst submitted digital art piece looses 20 chips",
-        "negative": true
+        "description": "Worst submitted digital art piece pays the bank",
+        "negative": true,
+        "penalty": "-10 chips"
     },
     {
         "id": 21,
-        "description": "20 chips to whoever majority of players agree to give chips too if it fails all players loose 10 chips",
-        "wildcard": true
+        "description": "10 chips to whoever majority of players agree to give chips to. If it fails all players loose 10 chips",
+        "wildcard": true,
+        "reward": "10 chips"
     },
     {
         "id": 22,
-        "description": "Most bets lost gets 20 chips",
-        "wildcard": true
+        "description": "Most bets lost in the next hangout",
+        "wildcard": true,
+        "reward": "10 chips"
     },
     {
         "id": 23,
-        "description": "Majority of players must agree on a player to loose 10 chips if no consensus is reached all players loose 15 chips",
-        "wildcard": true
+        "description": "Majority of players must agree on a player to lose 10 chips if no consensus is reached all players lose 15 chips",
+        "wildcard": true,
+        "penalty": "-10 chips to the chosen player, or -15 chips to all players if no consensus is reached"
     },
     {
         "id": 24,
@@ -110,18 +134,21 @@
     },
     {
         "id": 25,
-        "description": "whoever is willing to pay the other players the most chips (cumulative) gets 50 chips (doesn't have to be even payment between players)",
-        "wildcard": true
+        "description": "Whoever is willing to pay the other players the most chips (cumulative) gets 25 chips. The payment doesn't have to be even between players",
+        "wildcard": true,
+        "reward": "25 chips"
     },
     {
         "id": 26,
         "description": "The dealer - the richest player gains a dealer token. At the end of the next meet whoever holds the token deals out 10 chips to all other players. Passing the token isn't accusable",
-        "wildcard": true
+        "wildcard": true,
+        "penalty": "10 chips given to each player"
     },
     {
         "id": 27,
         "description": "The small blind - the poorest player gains a small blind token. At the end of the next meet whoever holds the token gains 20 chips from the bank. Stealing the token isn't accusable",
-        "wildcard": true
+        "wildcard": true,
+        "reward": "20 chips"
     },
     {
         "id": 28,
@@ -130,7 +157,7 @@
     },
     {
         "id": 29,
-        "description": "Random colour of chips is selected to become counterfeit chips worth -1 giving them to another player isn't an accusable event",
+        "description": "Random colour of chips is selected to become counterfeit chips worth -1. Giving them to another player isn't an accusable event",
         "wildcard": true
     },
     {
