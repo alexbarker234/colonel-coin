@@ -1,10 +1,15 @@
 import { emojis } from "@/utils/emojis";
-import { CommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    CommandInteraction,
+    EmbedBuilder,
+    SlashCommandBuilder
+} from "discord.js";
 module.exports = {
     data: new SlashCommandBuilder().setName("coincheck").setDescription("Call a coin check"),
     async execute(interaction: CommandInteraction) {
-        const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
-
         // Get count of real users in guild
         const guild = interaction.guild;
         if (!guild) {
@@ -30,7 +35,8 @@ module.exports = {
             .setCustomId("reject_coincheck")
             .setLabel("Reject")
             .setStyle(ButtonStyle.Danger);
-        const row = new ActionRowBuilder().addComponents(acceptButton, rejectButton);
+
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(acceptButton, rejectButton);
 
         // in memory storage
         const acceptedUsers = new Set([interaction.user.id]); // Initialize with command user

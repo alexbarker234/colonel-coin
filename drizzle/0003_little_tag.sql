@@ -1,0 +1,1 @@
+ALTER TABLE "guild_settings" ADD COLUMN "games_channel_id" varchar;

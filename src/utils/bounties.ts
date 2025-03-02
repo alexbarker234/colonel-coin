@@ -3,6 +3,7 @@ import { bounties, guildSettings } from "@/database/schema";
 import BotClient from "@/structures/BotClient";
 import { EmbedBuilder, Guild } from "discord.js";
 import { isNotNull } from "drizzle-orm";
+import { createButtonGame } from "./buttonGame";
 
 interface Bounty {
     id: number;
@@ -38,19 +39,36 @@ export const sendBounty = async (client: BotClient) => {
     const embed = createBountyEmbed(bounty);
 
     // For each guild, send the bounty message
-    for (const guild of guildMap) {
-        const channelId = guild[1].settings.bountiesChannelId;
+    for (const [guildId, { guild, settings }] of guildMap) {
+        const channelId = settings.bountiesChannelId;
         if (!channelId) continue;
 
-        console.log(`Sending bounty to ${guild[1].guild.name} with id ${channelId}`);
-        const channel = guild[1].guild.channels.cache.get(channelId);
+        console.log(`Sending bounty to ${guild.name} with id ${channelId}`);
+        const channel = guild.channels.cache.get(channelId);
         if (!channel) {
-            console.log(`No channel found in ${guild[1].guild.name} with id ${channelId}`);
+            console.log(`No channel found in ${guild.name} with id ${channelId}`);
             continue;
         }
         if (!channel.isTextBased()) continue;
 
         channel.send({ embeds: [embed] });
+
+        // SPECIAL CASE FOR BUTTON BOUNTY
+        if (bounty.id === 28) {
+            const gamesChannelId = settings.gamesChannelId;
+            if (!gamesChannelId) {
+                console.log(`No games channel set in ${guild.name} `);
+                continue;
+            }
+
+            const gamesChannel = guild.channels.cache.get(gamesChannelId);
+            if (!gamesChannel) {
+                console.log(`No games channel found in ${guild.name} with id ${gamesChannelId}`);
+                continue;
+            }
+
+            await createButtonGame(client, gamesChannel);
+        }
     }
 
     // Update the DB with the chosen bounty
@@ -60,7 +78,6 @@ export const sendBounty = async (client: BotClient) => {
 };
 
 export const createBountyEmbed = (bounty: Bounty) => {
-    console.log(bounty);
     const embed = new EmbedBuilder()
         .setTitle("🎯 New Bounty!")
         .setDescription(bounty.description)

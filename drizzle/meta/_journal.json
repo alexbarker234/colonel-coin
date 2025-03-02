@@ -15,6 +15,20 @@
       "when": 1739953746097,
       "tag": "0001_curious_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740905433349,
+      "tag": "0002_wonderful_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1740907196471,
+      "tag": "0003_little_tag",
+      "breakpoints": true
     }
   ]
 }

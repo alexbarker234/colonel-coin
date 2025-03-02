@@ -1,7 +1,13 @@
-import { Interaction } from "discord.js";
 import BotClient from "@/structures/BotClient";
+import { handleButtonPress } from "@/utils/buttonGame";
+import { Interaction } from "discord.js";
 
 module.exports = async (client: BotClient, interaction: Interaction) => {
+    await handleSlashCommand(interaction);
+    await handleButtonPress(interaction);
+};
+
+const handleSlashCommand = async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = (interaction.client as BotClient).commands.get(interaction.commandName);
@@ -21,7 +27,10 @@ module.exports = async (client: BotClient, interaction: Interaction) => {
                 ephemeral: true
             });
         } else {
-            await interaction.reply({ content: "There was an error while executing this command!", ephemeral: true });
+            await interaction.reply({
+                content: "There was an error while executing this command!",
+                ephemeral: true
+            });
         }
     }
 };

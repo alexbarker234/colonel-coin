@@ -1,5 +1,6 @@
 import BotClient from "@/structures/BotClient";
 import { sendBounty } from "@/utils/bounties";
+import { updateButtonGames } from "@/utils/buttonGame";
 import cron from "node-cron";
 
 export default (client: BotClient) => {
@@ -21,5 +22,10 @@ export default (client: BotClient) => {
                 console.error(error);
             }
         }, randomTime);
+    });
+
+    // Every 2 minutes update all button games
+    cron.schedule("*/2 * * * *", async () => {
+        updateButtonGames(client);
     });
 };
