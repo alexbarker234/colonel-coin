@@ -1,6 +1,7 @@
 import BotClient from "@/structures/BotClient";
 import { sendBounty } from "@/utils/bounties";
 import { updateButtonGames } from "@/utils/buttonGame";
+import { randomJoin } from "@/utils/voiceChannel";
 import cron from "node-cron";
 
 export default (client: BotClient) => {
@@ -24,8 +25,11 @@ export default (client: BotClient) => {
         }, randomTime);
     });
 
-    // Every 2 minutes update all button games
+    // Every 2 minutes
     cron.schedule("*/2 * * * *", async () => {
+        // Update button game messages
         updateButtonGames(client);
+        // Randomly join a channel and play audio :)
+        randomJoin(client);
     });
 };
