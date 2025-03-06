@@ -3,7 +3,7 @@ import { createAudioPlayer, createAudioResource, joinVoiceChannel } from "@disco
 import { VoiceBasedChannel } from "discord.js";
 import { join } from "path";
 
-const resource = createAudioResource(join(__dirname, "../assets/augh.mp3"));
+const soundPath = join(__dirname, "../assets/augh.mp3");
 
 export const randomJoin = async (client: BotClient) => {
     try {
@@ -35,6 +35,7 @@ const joinAndPlay = async (channel: VoiceBasedChannel) => {
 
     const subscription = connection.subscribe(player);
     if (subscription) {
+        const resource = createAudioResource(soundPath);
         player.play(resource);
 
         setTimeout(() => {
