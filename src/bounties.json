@@ -105,13 +105,13 @@
     },
     {
         "id": 20,
-        "description": "Worst submitted digital art piece pays the bank",
+        "description": "Everyone creates a digital art piece. Worst submitted art piece pays the bank",
         "negative": true,
         "penalty": "-10 chips"
     },
     {
         "id": 21,
-        "description": "10 chips to whoever majority of players agree to give chips to. If it fails all players loose 10 chips",
+        "description": "10 chips to whoever majority of players agree to give chips to. If it fails all players lose 10 chips",
         "wildcard": true,
         "reward": "10 chips"
     },
@@ -129,7 +129,7 @@
     },
     {
         "id": 24,
-        "description": "The two poorest players form an alliance and will receive full payment of any bounties (positive or negative) won by either party in the team for the next 4 days",
+        "description": "The two poorest players form an alliance and will receive full payment of any bounties (positive or negative) won by either party in the team for the next 2 bounty rolls",
         "wildcard": true
     },
     {

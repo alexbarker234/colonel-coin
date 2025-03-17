@@ -108,11 +108,30 @@ export const createBountyEmbed = (bounty: Bounty) => {
         });
     }
 
+    // RANDOM CHIP BOUNTY, choose the chip and add it as a field
+    if (bounty.id === 29) {
+        const chipColours = ["🟢 Green 🟢", "🔴 Red 🔴", "🔵 Blue 🔵", "⚫ Black ⚫", "⬜ White ⬜"];
+
+        const randomChipColour = chipColours[Math.floor(Math.random() * chipColours.length)];
+        embed.addFields({
+            name: "Negative Chip",
+            value: randomChipColour
+        });
+    }
+
     return embed;
 };
 
-export const chooseBounty = async (): Promise<Bounty> => {
+export const chooseBounty = async (id?: number): Promise<Bounty> => {
     const bountiesJSON = require("../bounties.json");
+    // If id is specified, just load the id
+    if (id) {
+        const bounty = bountiesJSON.find((b: any) => b.id === id);
+        if (!bounty) {
+            throw new Error(`Bounty with ID ${id} not found`);
+        }
+        return bounty;
+    }
 
     // Get all previously used bounty IDs from the database
     const usedBounties = await db.select().from(bounties);
