@@ -31,7 +31,9 @@ export const guildSettings = pgTable("guild_settings", {
     gamesChannelId: varchar("games_channel_id")
 });
 
-// Button game table
+// ================
+// Button game
+// ================
 export const buttonGame = pgTable("button_game", {
     id: uuid("id").primaryKey().defaultRandom(),
     channelId: varchar("channel_id").notNull(),
@@ -51,4 +53,30 @@ export const buttonGamePlayers = pgTable(
         score: integer("score").notNull()
     },
     (table) => [primaryKey({ columns: [table.gameId, table.userId] })]
+);
+
+// ================
+// Fishing game
+// ================
+export const fishingGame = pgTable("fishing_game", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    channelId: varchar("channel_id").notNull(),
+    messageId: varchar("message_id").notNull(),
+    fish: integer("fish").notNull()
+});
+
+export const fishingGamePlayers = pgTable(
+    "fishing_game_players",
+    {
+        gameId: uuid("game_id")
+            .references(() => fishingGame.id)
+            .notNull(),
+        userId: varchar("user_id")
+            .references(() => users.id)
+            .notNull(),
+        fishCaught: integer("fish_caught").notNull()
+    },
+    (table) => ({
+        pk: primaryKey({ columns: [table.gameId, table.userId] })
+    })
 );

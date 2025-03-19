@@ -1,10 +1,12 @@
 import BotClient from "@/structures/BotClient";
 import { handleButtonPress } from "@/utils/buttonGame";
+import { handleFishingButtons } from "@/utils/fishingGame";
 import { Interaction } from "discord.js";
 
 module.exports = async (client: BotClient, interaction: Interaction) => {
     await handleSlashCommand(interaction);
     await handleButtonPress(interaction);
+    await handleFishingButtons(interaction);
 };
 
 const handleSlashCommand = async (interaction: Interaction) => {

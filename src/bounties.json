@@ -164,5 +164,10 @@
         "id": 30,
         "description": "Next 2 \"bring most chips to a hangout\" bonus paid by the bank are 3x the usual amount",
         "wildcard": true
+    },
+    {
+        "id": 31,
+        "description": "Any bets made are matched by the bank for the next 2 hangouts",
+        "wildcard": true
     }
 ]
