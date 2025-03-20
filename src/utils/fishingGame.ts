@@ -28,10 +28,9 @@ export const createFishingGame = async (client: BotClient, channel: Channel) => 
         .setColor("#52aeeb");
 
     const button = new ButtonBuilder()
-        .setCustomId("catch_fish")
-        .setLabel("Try catch a fish")
-        .setStyle(ButtonStyle.Primary)
-        .setEmoji("🎣");
+        .setCustomId("start_fishing_game")
+        .setLabel("Start fishing")
+        .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
 
@@ -48,45 +47,84 @@ export const createFishingGame = async (client: BotClient, channel: Channel) => 
     });
 };
 
+const sendFishingMessage = async (interaction: ButtonInteraction) => {
+    const game = await db.select().from(fishingGame).where(eq(fishingGame.messageId, interaction.message.id)).limit(1);
+    if (game.length === 0) return;
+    const gameId = game[0].id;
+
+    const embed = new EmbedBuilder()
+        .setTitle("🐟 You are fishing 🐟")
+        .setDescription("Press the button to fish")
+        .setColor("#52aeeb");
+
+    const button = new ButtonBuilder()
+        .setCustomId("catch_fish")
+        .setLabel("Try catch a fish")
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji("🎣");
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+    const message = await interaction.reply({
+        embeds: [embed],
+        components: [row],
+        ephemeral: true,
+        fetchReply: true
+    });
+
+    const collector = message.createMessageComponentCollector({
+        time: 60000 // Collector expires after 10 minutes
+    });
+
+    collector.on("collect", async (i) => {
+        if (i.isButton() && i.customId === "catch_fish") catchFish(i, embed, interaction, gameId);
+    });
+
+    collector.on("end", () => {
+        embed.setDescription("This fishing session is over, please start another for more fish!");
+        interaction.editReply({ embeds: [embed], components: [] });
+    });
+
+    return { message, embed };
+};
+
 export const handleFishingButtons = async (interaction: Interaction) => {
     if (!interaction.isButton()) return;
 
-    if (interaction.customId === "catch_fish") catchFish(interaction, interaction.message.id);
+    if (interaction.customId === "start_fishing_game") startFishingGame(interaction);
 };
 
-const catchFish = async (interaction: ButtonInteraction, originalMessageId: string) => {
+const catchFish = async (
+    interaction: ButtonInteraction,
+    embed: EmbedBuilder,
+    originalInteraction: ButtonInteraction,
+    gameId: string
+) => {
     try {
         await getUser(interaction.user.id);
 
-        // Fetch game data
-        const gameResults = await db
-            .select()
-            .from(fishingGame)
-            .where(eq(fishingGame.messageId, originalMessageId))
-            .limit(1);
-        if (gameResults.length === 0) return;
-        const game = gameResults[0];
+        // Get the game data from the database
+        const games = await db.select().from(fishingGame).where(eq(fishingGame.id, gameId)).limit(1);
+
+        if (games.length === 0) return;
+        const game = games[0];
+
         const currentFish = game.fish;
 
         // Chance of catching a fish is minimum 10% maximum 50%
         const chance = clamp(currentFish / MAX_FISH, 0.1, 0.5);
         const roll = Math.random();
 
-        // Build message
-        const embed = new EmbedBuilder().setTitle("🐟 Fishing 🐟").setColor("#52aeeb");
-        const button = new ButtonBuilder()
-            .setCustomId("catch_another_fish")
-            .setLabel("Try catch another fish")
-            .setStyle(ButtonStyle.Primary)
-            .setEmoji("🎣");
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+        // Fetch the player
+        const playerResults = await db
+            .select()
+            .from(fishingGamePlayers)
+            .where(and(eq(fishingGamePlayers.userId, interaction.user.id), eq(fishingGamePlayers.gameId, game.id)))
+            .limit(1);
+        const player = playerResults[0];
 
-        // NO FISH
-        if (roll > chance) {
-            embed.setDescription("You didn't catch a fish. Try again!");
-        }
         // FISH CAUGHT
-        else {
+        if (roll <= chance) {
             // Remove fish from the game
             await db
                 .update(fishingGame)
@@ -106,32 +144,29 @@ const catchFish = async (interaction: ButtonInteraction, originalMessageId: stri
                     set: { fishCaught: sql`${fishingGamePlayers.fishCaught} + 1` }
                 });
 
-            // Fetch the player
-            const player = await db
-                .select()
-                .from(fishingGamePlayers)
-                .where(and(eq(fishingGamePlayers.userId, interaction.user.id), eq(fishingGamePlayers.gameId, game.id)))
-                .limit(1);
-
-            embed.setDescription(`You caught a fish! 🐟\nYou now have ${player[0].fishCaught} fish!`);
+            // Edit the message embed
+            embed.setDescription(`You caught a fish! 🐟\n\nYou have ${player.fishCaught + 1} fish!`);
+        }
+        // No fish
+        else {
+            embed.setDescription(`You didn't catch a fish. Try again!\n\nYou have ${player.fishCaught} fish!`);
         }
 
-        const message = await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+        interaction.deferUpdate();
+        await originalInteraction.editReply({ embeds: [embed] });
+    } catch (error) {
+        console.error(error);
+    }
+};
 
-        const collector = message.createMessageComponentCollector({
-            time: 60000 // Collector expires after 10 minutes
-        });
+const startFishingGame = async (interaction: Interaction) => {
+    try {
+        await getUser(interaction.user.id);
 
-        collector.on("collect", async (i) => {
-            if (!i.isButton()) return;
-            if (i.customId === "catch_another_fish") catchFish(i, originalMessageId);
-        });
+        if (!interaction.isButton() || interaction.customId !== "start_fishing_game") return;
 
-        collector.on("end", () => {
-            // Disable the button when collector expires
-            const disabledRow = new ActionRowBuilder<ButtonBuilder>().addComponents(button.setDisabled(true));
-            interaction.editReply({ components: [disabledRow] });
-        });
+        // send personal fishing minigame
+        await sendFishingMessage(interaction);
     } catch (error) {
         console.error(error);
     }
