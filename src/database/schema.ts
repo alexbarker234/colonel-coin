@@ -76,7 +76,5 @@ export const fishingGamePlayers = pgTable(
             .notNull(),
         fishCaught: integer("fish_caught").notNull()
     },
-    (table) => ({
-        pk: primaryKey({ columns: [table.gameId, table.userId] })
-    })
+    (table) => [primaryKey({ columns: [table.gameId, table.userId] })]
 );
