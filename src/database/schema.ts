@@ -62,7 +62,8 @@ export const fishingGame = pgTable("fishing_game", {
     id: uuid("id").primaryKey().defaultRandom(),
     channelId: varchar("channel_id").notNull(),
     messageId: varchar("message_id").notNull(),
-    fish: integer("fish").notNull()
+    fish: integer("fish").notNull(),
+    breedingProgress: integer("breeding_progress").notNull().default(0)
 });
 
 export const fishingGamePlayers = pgTable(

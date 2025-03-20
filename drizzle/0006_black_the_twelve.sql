@@ -1,0 +1,1 @@
+ALTER TABLE "fishing_game" ADD COLUMN "breeding_progress" integer DEFAULT 0 NOT NULL;

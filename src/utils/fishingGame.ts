@@ -10,7 +10,7 @@ import {
     EmbedBuilder,
     Interaction
 } from "discord.js";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gt, sql } from "drizzle-orm";
 import { emojis } from "./emojis";
 import { clamp } from "./mathUtils";
 import { getUser } from "./user";
@@ -23,13 +23,14 @@ export const createFishingGame = async (client: BotClient, channel: Channel) => 
     const embed = new EmbedBuilder()
         .setTitle("🎣 Fishing Hole 🎣")
         .setDescription(
-            `Catch fish to trade for chips.\nThe hole starts with 20 fish with a maximum of ${MAX_FISH} fish.\nOverfishing will kill the fishing hole and no more fish will appear.\n\n🐟 5 fish for ${emojis.chip} 1 chip.`
+            `Catch fish to trade for chips.\nThe hole starts with 20 fish, fish breed over time with a maximum of ${MAX_FISH} fish.\nOverfishing will kill the fishing hole and no more fish will appear.\n\n🐟 5 fish for ${emojis.chip} 1 chip.`
         )
         .setColor("#52aeeb");
 
     const button = new ButtonBuilder()
         .setCustomId("start_fishing_game")
         .setLabel("Start fishing")
+        .setEmoji("🎣")
         .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
@@ -73,17 +74,14 @@ const sendFishingMessage = async (interaction: ButtonInteraction) => {
     });
 
     const collector = message.createMessageComponentCollector({
-        time: 60000 // Collector expires after 10 minutes
+        time: 600000 // Collector expires after 10 minutes
     });
 
     collector.on("collect", async (i) => {
         if (i.isButton() && i.customId === "catch_fish") catchFish(i, embed, interaction, gameId);
     });
 
-    collector.on("end", () => {
-        embed.setDescription("This fishing session is over, please start another for more fish!");
-        interaction.editReply({ embeds: [embed], components: [] });
-    });
+    collector.on("end", () => interaction.deleteReply());
 
     return { message, embed };
 };
@@ -104,10 +102,9 @@ const catchFish = async (
         await getUser(interaction.user.id);
 
         // Get the game data from the database
-        const games = await db.select().from(fishingGame).where(eq(fishingGame.id, gameId)).limit(1);
-
-        if (games.length === 0) return;
-        const game = games[0];
+        const gameResults = await db.select().from(fishingGame).where(eq(fishingGame.id, gameId)).limit(1);
+        if (gameResults.length === 0) return;
+        const game = gameResults[0];
 
         const currentFish = game.fish;
 
@@ -124,7 +121,7 @@ const catchFish = async (
         const player = playerResults[0];
 
         // FISH CAUGHT
-        if (roll <= chance) {
+        if (roll <= chance && currentFish > 0) {
             // Remove fish from the game
             await db
                 .update(fishingGame)
@@ -169,5 +166,51 @@ const startFishingGame = async (interaction: Interaction) => {
         await sendFishingMessage(interaction);
     } catch (error) {
         console.error(error);
+    }
+};
+
+/**
+ * Handles fish breeding mechanics for a fishing game instance
+ *
+ * Every pair of fish contributes to breeding progress, which accumulates hourly.
+ * Progress is calculated as: (number of fish pairs * 100%) / 24 hours
+ * When progress reaches 100%, a new fish spawns and progress resets.
+ * Multiple fish can spawn if enough progress accumulates.
+ * The total fish count is capped at MAX_FISH.
+ *
+ * @param gameId - UUID of the fishing game instance
+ */
+export const updateFishingGameBreeding = async () => {
+    const games = await db.select().from(fishingGame).where(gt(fishingGame.fish, 0));
+
+    for (const game of games) {
+        // Calculate breeding progress increment based on number of fish pairs
+        // 24 increments needed to reach 100%, so divide by 24 for hourly updates
+        const fishPairs = Math.floor(game.fish / 2);
+        const progressIncrement = (fishPairs * 100) / 24;
+
+        // Add progress and check if we should spawn new fish
+        let newProgress = game.breedingProgress + progressIncrement;
+        let newFish = 0;
+
+        // While we have 100% or more progress, spawn a fish and subtract 100%
+        while (newProgress >= 100) {
+            newProgress -= 100;
+            newFish++;
+        }
+        newProgress = Math.floor(newProgress);
+
+        // console.log(`For game ${game.id} we have ${newFish} new fish and ${newProgress}% progress`);
+
+        // Update the game with new fish count and remaining progress
+        const totalFish = Math.min(game.fish + newFish, MAX_FISH);
+
+        await db
+            .update(fishingGame)
+            .set({
+                fish: totalFish,
+                breedingProgress: newProgress
+            })
+            .where(eq(fishingGame.id, game.id));
     }
 };

@@ -1,6 +1,7 @@
 import BotClient from "@/structures/BotClient";
 import { sendBounty } from "@/utils/bounties";
 import { updateButtonGames } from "@/utils/buttonGame";
+import { updateFishingGameBreeding } from "@/utils/fishingGame";
 import { randomJoin } from "@/utils/voiceChannel";
 import cron from "node-cron";
 
@@ -23,6 +24,15 @@ export default (client: BotClient) => {
                 console.error(error);
             }
         }, randomTime);
+    });
+
+    // Every 1 minute
+    cron.schedule("* * * * *", () => {
+        try {
+            updateFishingGameBreeding();
+        } catch (error) {
+            console.error(error);
+        }
     });
 
     // Every 2 minutes
