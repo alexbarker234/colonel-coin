@@ -19,6 +19,7 @@ export const sendBounty = async (client: BotClient) => {
 
     // Choose bounty
     const bounty = await chooseBounty();
+    if (!bounty) return;
 
     // Fetch guild settings from DB
     const guildSettingList = await db.select().from(guildSettings).where(isNotNull(guildSettings.bountiesChannelId));
@@ -122,7 +123,7 @@ export const createBountyEmbed = (bounty: Bounty) => {
     return embed;
 };
 
-export const chooseBounty = async (id?: number): Promise<Bounty> => {
+export const chooseBounty = async (id?: number): Promise<Bounty | null> => {
     const bountiesJSON = require("../bounties.json");
     // If id is specified, just load the id
     if (id) {
@@ -144,8 +145,8 @@ export const chooseBounty = async (id?: number): Promise<Bounty> => {
     // Determine which type to use based on availability
     let isWildcard = false;
     if (availableWildcards.length === 0 && availableNormal.length === 0) {
-        // If all bounties used, randomly choose from all bounties
-        isWildcard = Math.random() < 0.5;
+        // If all bounties used, none
+        return null;
     } else if (availableWildcards.length === 0) {
         // No wildcards left, always use normal
         isWildcard = false;

@@ -12,6 +12,10 @@ module.exports = {
         try {
             const id = interaction.options.getInteger("id");
             const bounty = await chooseBounty(id ?? undefined);
+            if (!bounty) {
+                await interaction.reply({ content: "No bounty found", ephemeral: true });
+                return;
+            }
             const embed = createBountyEmbed(bounty);
             await interaction.reply({ embeds: [embed] });
         } catch (error) {
