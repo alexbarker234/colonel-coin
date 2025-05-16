@@ -1,6 +1,7 @@
 import BotClient from "@/structures/BotClient";
 import { sendBounty } from "@/utils/bounties";
 import { updateButtonGames } from "@/utils/buttonGame";
+import { deleteExpiredTokens } from "@/utils/loginTokens";
 import { randomJoin } from "@/utils/voiceChannel";
 import cron from "node-cron";
 
@@ -31,5 +32,7 @@ export default (client: BotClient) => {
         updateButtonGames(client);
         // Randomly join a channel and play audio :)
         randomJoin(client);
+        // Delete expired login tokens
+        deleteExpiredTokens();
     });
 };
