@@ -1,5 +1,4 @@
-import { db } from "@/database/db";
-import { bounties } from "@/database/schema";
+import { bounties, db } from "database";
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 
 module.exports = {

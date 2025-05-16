@@ -1,6 +1,5 @@
+import { db, guildSettings } from "database";
 import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
-import { db } from "../../database/db";
-import { guildSettings } from "../../database/schema";
 
 module.exports = {
     data: new SlashCommandBuilder()

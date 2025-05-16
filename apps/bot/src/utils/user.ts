@@ -1,6 +1,4 @@
-import { db } from "@/database/db";
-import { users } from "@/database/schema";
-import { eq, InferSelectModel } from "drizzle-orm";
+import { db, eq, InferSelectModel, users } from "database";
 
 export async function getUser(id: string): Promise<InferSelectModel<typeof users>> {
     const user = await db.select().from(users).where(eq(users.id, id)).limit(1);

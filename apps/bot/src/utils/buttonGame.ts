@@ -1,8 +1,7 @@
-import { db } from "@/database/db";
-import { buttonGame, buttonGamePlayers } from "@/database/schema";
 import BotClient from "@/structures/BotClient";
+import { and, db, desc, eq } from "database";
+import { buttonGame, buttonGamePlayers } from "database/schema";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, EmbedBuilder, Interaction } from "discord.js";
-import { and, desc, eq } from "drizzle-orm";
 import { getUser } from "./user";
 
 export const createButtonGame = async (client: BotClient, channel: Channel) => {

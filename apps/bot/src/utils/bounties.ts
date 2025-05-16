@@ -1,8 +1,6 @@
-import { db } from "@/database/db";
-import { bounties, guildSettings } from "@/database/schema";
 import BotClient from "@/structures/BotClient";
+import { bounties, db, guildSettings, isNotNull } from "database";
 import { EmbedBuilder, Guild } from "discord.js";
-import { isNotNull } from "drizzle-orm";
 import { createButtonGame } from "./buttonGame";
 
 interface Bounty {
