@@ -1,14 +1,11 @@
 {
-    "name": "colonel-coin",
+    "name": "bot",
     "version": "1.0.0",
     "description": "",
     "scripts": {
         "start": "tsx -r tsconfig-paths/register src/bot.ts",
         "dev": "tsx -r tsconfig-paths/register src/bot.ts --watch",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "generate": "drizzle-kit generate",
-        "migrate": "drizzle-kit migrate",
-        "studio": "drizzle-kit studio",
         "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
         "typecheck": "tsc --noEmit"
     },

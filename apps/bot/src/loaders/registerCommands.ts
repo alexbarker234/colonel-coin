@@ -2,18 +2,22 @@ import BotClient from "@/structures/BotClient";
 import { SlashCommand } from "@/types";
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
 import fs from "fs";
+import { dirname, join } from "path";
 
 export default (client: BotClient) => {
     // WHAAAAT THE HECK ISS THISS NAMMMMEE????>!!
     const commandsJSON: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
 
-    const commandDirs = fs.readdirSync(global.src + "/commands/");
+    const rootDir = dirname(require.main?.filename || "");
+    if (rootDir === ".") throw new Error("Root directory not found");
+
+    const commandDirs = fs.readdirSync(join(rootDir, "commands"));
     for (const dirName of commandDirs) {
         const commandFiles = fs
-            .readdirSync(global.src + "/commands/" + dirName + "/")
+            .readdirSync(join(rootDir, "commands", dirName))
             .filter((file: string) => file.endsWith(".ts"));
         for (const file of commandFiles) {
-            const command: SlashCommand = require(global.src + "/commands/" + dirName + "/" + `${file}`);
+            const command: SlashCommand = require(join(rootDir, "commands", dirName, `${file}`));
 
             //command.type = dirName;
             if (command.debug && !process.env.DEBUG) {

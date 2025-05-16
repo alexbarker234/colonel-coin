@@ -6,9 +6,10 @@
     "scripts": {
         "dev": "tsc --watch",
         "build": "tsc",
-        "db:check": "drizzle-kit check:pg",
-        "db:generate": "drizzle-kit generate:pg",
-        "db:migrate": "ts-node ./migrate.ts"
+        "db:check": "drizzle-kit check",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "drizzle-kit migrate",
+        "db:studio": "drizzle-kit studio"
     },
     "dependencies": {
         "dotenv": "^16.5.0",

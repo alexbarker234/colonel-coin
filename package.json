@@ -8,6 +8,7 @@
         "db:check": "turbo run db:check",
         "db:generate": "turbo run db:generate",
         "db:migrate": "turbo run db:migrate",
+        "db:studio": "turbo run db:studio",
         "db:up": "cd packages/database && docker-compose up"
     },
     "devDependencies": {
