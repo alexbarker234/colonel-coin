@@ -1,6 +1,7 @@
 {
     "private": true,
     "scripts": {
+        "start": "turbo run start --env-mode=loose",
         "build": "turbo run build --env-mode=loose",
         "dev": "turbo run dev --env-mode=loose",
         "lint": "turbo run lint",
