@@ -1,14 +1,14 @@
 {
     "private": true,
     "scripts": {
-        "build": "turbo run build",
-        "dev": "turbo run dev",
+        "build": "turbo run build --env-mode=loose",
+        "dev": "turbo run dev --env-mode=loose",
         "lint": "turbo run lint",
         "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-        "db:check": "turbo run db:check",
-        "db:generate": "turbo run db:generate",
-        "db:migrate": "turbo run db:migrate",
-        "db:studio": "turbo run db:studio",
+        "db:check": "turbo run db:check --env-mode=loose",
+        "db:generate": "turbo run db:generate --env-mode=loose",
+        "db:migrate": "turbo run db:migrate --env-mode=loose",
+        "db:studio": "turbo run db:studio --env-mode=loose",
         "db:up": "cd packages/database && docker-compose up"
     },
     "devDependencies": {
