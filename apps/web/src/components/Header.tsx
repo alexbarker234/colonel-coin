@@ -10,7 +10,7 @@ export default async function Header() {
   return (
     <header className="flex items-center justify-end gap-2 py-2 px-6">
       <Image src={userInfo.avatarURL} alt={userInfo.username} width={32} height={32} className="rounded-full" />
-      <span>{userInfo.username}</span>
+      <span className="font-bold">{userInfo.username}</span>
     </header>
   );
 }

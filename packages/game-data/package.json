@@ -1,0 +1,14 @@
+{
+    "name": "game-data",
+    "version": "0.0.0",
+    "private": true,
+    "main": "dist/index.js",
+    "scripts": {
+        "dev": "tsc --watch",
+        "build": "tsc"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "typescript": "^5.8.3"
+    }
+}

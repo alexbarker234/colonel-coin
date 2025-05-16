@@ -57,6 +57,12 @@ importers:
 
   apps/web:
     dependencies:
+      database:
+        specifier: workspace:*
+        version: link:../../packages/database
+      game-data:
+        specifier: workspace:*
+        version: link:../../packages/game-data
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -134,6 +140,12 @@ importers:
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.15.18)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  packages/game-data:
+    devDependencies:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
