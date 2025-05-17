@@ -2,8 +2,6 @@ import { integer, pgTable, primaryKey, timestamp, uuid, varchar } from "drizzle-
 
 export const users = pgTable("users", {
     id: varchar("id").primaryKey(),
-    username: varchar("username").notNull(),
-    avatarUrl: varchar("avatar_url"),
     balance: integer("balance").notNull().default(0),
 });
 

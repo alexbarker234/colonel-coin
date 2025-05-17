@@ -1,5 +1,4 @@
-import { db } from "database";
-import { loginTokens } from "database/schema";
+import { db, loginTokens } from "database";
 import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 
 module.exports = {

@@ -15,7 +15,7 @@ export default function MapPage() {
 
   return (
     <div className="max-w-4xl mx-auto w-full h-full">
-      <Map position={[-31.957139, 115.807917]} zoom={13} />
+      <Map />
     </div>
   );
 }

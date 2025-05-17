@@ -3,7 +3,7 @@
     "build": {
         "builder": "NIXPACKS",
         "watchPatterns": ["/apps/bot", "/packages/database", "/package.json"],
-        "buildCommand": "pnpm run build --filter database"
+        "buildCommand": "pnpm run build --filter database --filter game-data"
     },
     "deploy": {
         "numReplicas": 1,
