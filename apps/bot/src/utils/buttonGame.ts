@@ -1,11 +1,10 @@
 import BotClient from "@/structures/BotClient";
-import { and, db, desc, eq } from "database";
-import { buttonGame, buttonGamePlayers } from "database/schema";
+import { and, buttonGame, buttonGamePlayers, db, desc, eq } from "database";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, EmbedBuilder, Interaction } from "discord.js";
 import { getUser } from "./user";
 
 export const createButtonGame = async (client: BotClient, channel: Channel) => {
-    if (!channel.isTextBased()) return;
+    if (!channel.isTextBased() || channel.isDMBased()) return;
 
     const embed = new EmbedBuilder()
         .setTitle("🎮 The Button Game 🎮")

@@ -1,5 +1,5 @@
 import { db, guildSettings } from "database";
-import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,7 +18,7 @@ module.exports = {
         if (!interaction.guildId || !interaction.channelId) {
             return await interaction.reply({
                 content: "This command can only be used in a server!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
 
@@ -38,7 +38,7 @@ module.exports = {
 
         await interaction.reply({
             content: `Successfully set <#${interaction.channelId}> as the ${type} announcement channel!`,
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         });
     }
 };

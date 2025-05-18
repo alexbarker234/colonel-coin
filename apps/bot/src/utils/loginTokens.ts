@@ -1,5 +1,4 @@
-import { db, lt } from "database";
-import { loginTokens } from "database/schema";
+import { db, loginTokens, lt } from "database";
 
 export const deleteExpiredTokens = async () => {
     try {

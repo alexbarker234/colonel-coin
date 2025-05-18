@@ -4,6 +4,7 @@
         "start": "turbo run start --env-mode=loose",
         "build": "turbo run build --env-mode=loose",
         "dev": "turbo run dev --env-mode=loose",
+        "dev:packages": "turbo run dev --env-mode=loose --filter=game-data --filter=database",
         "lint": "turbo run lint",
         "format": "prettier --write \"**/*.{ts,tsx,md}\"",
         "db:check": "turbo run db:check --env-mode=loose",

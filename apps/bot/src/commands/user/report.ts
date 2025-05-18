@@ -1,6 +1,6 @@
 import { getUser } from "@/utils/user";
 import { db, eq, users } from "database";
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
         if (amount < 0) {
             await interaction.reply({
                 content: "You cannot report a negative balance!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
             return;
         }
@@ -27,7 +27,7 @@ module.exports = {
 
         await interaction.reply({
             content: `Successfully updated your balance to ${amount}!`,
-            ephemeral: true
+            flags: MessageFlags.Ephemeral
         });
     }
 };

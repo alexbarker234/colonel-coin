@@ -1,5 +1,5 @@
 import { db, loginTokens } from "database";
-import { CommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 module.exports = {
     data: new SlashCommandBuilder().setName("web").setDescription("Get a login link for the website"),
@@ -21,6 +21,6 @@ module.exports = {
             .setColor("#5865F2")
             .setFooter({ text: "Link expires in 24 hours. Do not share this link with others." });
 
-        await interaction.reply({ embeds: [embed], ephemeral: true });
+        await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
     }
 };

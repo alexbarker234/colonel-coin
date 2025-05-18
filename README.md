@@ -2,6 +2,8 @@
 
 Monorepo using Turborepo
 
+# Apps
+
 ## Bot - Discord.js
 
 ### Auto Loading
@@ -12,6 +14,10 @@ Commands and events are loaded automatically from the `src/commands` and `src/ev
 
 TODO - write
 
+# Packages
+
 ## Databse - Drizzle
 
 TODO - write
+
+## Game Data

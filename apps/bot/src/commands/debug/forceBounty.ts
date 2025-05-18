@@ -1,5 +1,5 @@
 import { chooseBounty, createBountyEmbed } from "@/utils/bounties";
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("forcebounty")
@@ -13,14 +13,14 @@ module.exports = {
             const id = interaction.options.getInteger("id");
             const bounty = await chooseBounty(id ?? undefined);
             if (!bounty) {
-                await interaction.reply({ content: "No bounty found", ephemeral: true });
+                await interaction.reply({ content: "No bounty found", flags: MessageFlags.Ephemeral });
                 return;
             }
             const embed = createBountyEmbed(bounty);
             await interaction.reply({ embeds: [embed] });
         } catch (error) {
             console.error(error);
-            await interaction.reply({ content: "Error choosing bounty", ephemeral: true });
+            await interaction.reply({ content: "Error choosing bounty", flags: MessageFlags.Ephemeral });
         }
     }
 };
