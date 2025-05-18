@@ -1,6 +1,7 @@
 import BotClient from "@/structures/BotClient";
 import { bounties, db, guildSettings, isNotNull } from "database";
 import { EmbedBuilder, Guild } from "discord.js";
+import { bountyData } from "game-data";
 
 interface Bounty {
     id: number;
@@ -106,10 +107,9 @@ export const createBountyEmbed = (bounty: Bounty, client: BotClient) => {
 };
 
 export const chooseBounty = async (id?: number): Promise<Bounty | null> => {
-    const bountiesJSON = require("../bounties.json");
     // If id is specified, just load the id
     if (id) {
-        const bounty = bountiesJSON.find((b: any) => b.id === id);
+        const bounty = bountyData.find((b: any) => b.id === id);
         if (!bounty) {
             throw new Error(`Bounty with ID ${id} not found`);
         }
@@ -121,8 +121,8 @@ export const chooseBounty = async (id?: number): Promise<Bounty | null> => {
     const usedBountyIds = new Set(usedBounties.map((b) => b.id));
 
     // Check available bounties of each type
-    const availableWildcards = bountiesJSON.filter((b: any) => b.wildcard && !usedBountyIds.has(b.id));
-    const availableNormal = bountiesJSON.filter((b: any) => !b.wildcard && !usedBountyIds.has(b.id));
+    const availableWildcards = bountyData.filter((b: any) => b.wildcard && !usedBountyIds.has(b.id));
+    const availableNormal = bountyData.filter((b: any) => !b.wildcard && !usedBountyIds.has(b.id));
 
     // Determine which type to use based on availability
     let isWildcard = false;
@@ -141,7 +141,7 @@ export const chooseBounty = async (id?: number): Promise<Bounty | null> => {
     }
 
     // TODO simplify this by using previous filter probs
-    const bountyPool = bountiesJSON.filter((b: any) => (isWildcard ? b.wildcard : !b.wildcard));
+    const bountyPool = bountyData.filter((b: any) => (isWildcard ? b.wildcard : !b.wildcard));
     const availableBounties = bountyPool.filter((b: any) => !usedBountyIds.has(b.id));
     const filteredPool = availableBounties.length > 0 ? availableBounties : bountyPool;
 

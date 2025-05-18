@@ -3,6 +3,7 @@ import { users } from "./schema";
 
 export const pointGame = pgTable("point_game", {
     id: uuid("id").primaryKey().defaultRandom(),
+    gameStartedAt: timestamp("game_started_at", { withTimezone: true }).defaultNow().notNull(),
     // Used to update a message with the latest points
     channelId: varchar("channel_id").notNull(),
     messageId: varchar("message_id").notNull(),
