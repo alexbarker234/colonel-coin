@@ -1,7 +1,6 @@
 import BotClient from "@/structures/BotClient";
 import { bounties, db, guildSettings, isNotNull } from "database";
 import { EmbedBuilder, Guild } from "discord.js";
-import { createButtonGame } from "./buttonGame";
 
 interface Bounty {
     id: number;
@@ -12,11 +11,11 @@ interface Bounty {
     penalty?: string;
 }
 
-export const sendBounty = async (client: BotClient) => {
+export const sendBounty = async (client: BotClient, bountyId?: number, markAsUsed = true) => {
     const guilds = client.guilds.cache;
 
     // Choose bounty
-    const bounty = await chooseBounty();
+    const bounty = await chooseBounty(bountyId);
     if (!bounty) return;
 
     // Fetch guild settings from DB
@@ -35,7 +34,7 @@ export const sendBounty = async (client: BotClient) => {
 
     console.log(`Sending bounty to ${guildMap.size} guilds`);
 
-    const embed = createBountyEmbed(bounty);
+    const embed = createBountyEmbed(bounty, client);
 
     // For each guild, send the bounty message
     for (const [guildId, { guild, settings }] of guildMap) {
@@ -52,31 +51,21 @@ export const sendBounty = async (client: BotClient) => {
 
         channel.send({ embeds: [embed] });
 
-        // SPECIAL CASE FOR BUTTON BOUNTY
-        if (bounty.id === 28) {
-            const gamesChannelId = settings.gamesChannelId;
-            if (!gamesChannelId) {
-                console.log(`No games channel set in ${guild.name} `);
-                continue;
-            }
-
-            const gamesChannel = guild.channels.cache.get(gamesChannelId);
-            if (!gamesChannel) {
-                console.log(`No games channel found in ${guild.name} with id ${gamesChannelId}`);
-                continue;
-            }
-
-            await createButtonGame(client, gamesChannel);
+        const bountyCode = client.bounties.get(bounty.id);
+        if (bountyCode && bountyCode.postSendBounty) {
+            await bountyCode.postSendBounty(client, guild, settings);
         }
     }
 
     // Update the DB with the chosen bounty
-    await db.insert(bounties).values({
-        id: bounty.id
-    });
+    if (markAsUsed) {
+        await db.insert(bounties).values({
+            id: bounty.id
+        });
+    }
 };
 
-export const createBountyEmbed = (bounty: Bounty) => {
+export const createBountyEmbed = (bounty: Bounty, client: BotClient) => {
     const embed = new EmbedBuilder()
         .setTitle("🎯 New Bounty!")
         .setDescription(bounty.description)
@@ -107,15 +96,10 @@ export const createBountyEmbed = (bounty: Bounty) => {
         });
     }
 
-    // RANDOM CHIP BOUNTY, choose the chip and add it as a field
-    if (bounty.id === 29) {
-        const chipColours = ["🟢 Green 🟢", "🔴 Red 🔴", "🔵 Blue 🔵", "⚫ Black ⚫", "⬜ White ⬜"];
-
-        const randomChipColour = chipColours[Math.floor(Math.random() * chipColours.length)];
-        embed.addFields({
-            name: "Negative Chip",
-            value: randomChipColour
-        });
+    // Modify embed for special bounties
+    const bountyCode = client.bounties.get(bounty.id);
+    if (bountyCode && bountyCode.modifyEmbed) {
+        bountyCode.modifyEmbed(embed);
     }
 
     return embed;

@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import registerBounties from "@/loaders/registerBounties";
 import registerCommands from "@/loaders/registerCommands";
 import registerListeners from "@/loaders/registerListeners";
 import BotClient from "@/structures/BotClient";
@@ -17,5 +18,6 @@ const client = new BotClient({
 registerCommands(client);
 registerListeners(client);
 registerSchedules(client);
+registerBounties(client);
 
 client.login(token);
