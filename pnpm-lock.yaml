@@ -35,6 +35,9 @@ importers:
       ffmpeg-static:
         specifier: ^5.2.0
         version: 5.2.0
+      game-data:
+        specifier: workspace:*
+        version: link:../../packages/game-data
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3

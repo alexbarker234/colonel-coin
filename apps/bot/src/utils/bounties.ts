@@ -1,6 +1,6 @@
 import { bounties, db, guildSettings, isNotNull } from "database";
 import { Client, EmbedBuilder, Guild } from "discord.js";
-import { bountyData } from "game-data"; // why cant it find this module? tsx loads it fine.
+import { bountyData } from "game-data";
 
 interface Bounty {
     id: number;

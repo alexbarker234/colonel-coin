@@ -21,7 +21,7 @@
             "@/*": ["./src/*"]
         }
     },
-    "files": ["src/bot.ts", "./global.d.ts"],
+    "files": ["src/bot.ts"],
     "include": ["./**/*.ts"],
     "exclude": ["node_modules", "dist"]
 }

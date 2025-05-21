@@ -1,15 +1,15 @@
 import { Bounty } from "@/types";
-import { createButtonGame } from "@/utils/buttonGame";
 import { getGamesChannel } from "@/utils/miscUtils";
+import { createPointGame } from "@/utils/pointGame";
 
-const buttonGame: Bounty = {
-    id: 28,
+const pointGame: Bounty = {
+    id: 31,
     postSendBounty: async (client, guild, settings) => {
         const gamesChannel = await getGamesChannel(guild, settings);
         if (!gamesChannel) return;
 
-        await createButtonGame(client, gamesChannel);
+        await createPointGame(client, gamesChannel);
     }
 };
 
-export default buttonGame;
+export default pointGame;

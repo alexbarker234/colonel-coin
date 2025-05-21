@@ -164,5 +164,12 @@
         "id": 30,
         "description": "Next 2 \"bring most chips to a hangout\" bonus paid by the bank are 3x the usual amount",
         "wildcard": true
+    },
+    {
+        "id": 31,
+        "customId": "point-game",
+        "description": "Map rush! Claim points of interest around Perth to increase your points.",
+        "reward": "20 chips",
+        "wildcard": true
     }
 ]

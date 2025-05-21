@@ -9,5 +9,6 @@ export interface BountyData {
     description: string;
     reward: string;
     negative?: boolean;
+    wildcard?: boolean;
     penalty?: string;
 }

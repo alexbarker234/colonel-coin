@@ -1,13 +1,13 @@
-import { db, eq, pointGame, pointGamePlayers, pointGamePoints, users } from "database";
+import { and, db, desc, eq, isNotNull, pointGame, pointGamePlayers, pointGamePoints, sql, users } from "database";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder } from "discord.js";
+import { pointsOfInterest } from "game-data";
 
 export async function createPointGame(client: Client, channel: Channel) {
     if (!channel.isTextBased() || channel.isDMBased()) return;
 
-    const members = await channel.guild.members.fetch();
-    const humanCount = members.filter((member) => !member.user.bot).size;
+    const members = (await channel.guild.members.fetch()).filter((member) => !member.user.bot);
     // why'd i add this? this is a bot for like 2 friends
-    if (humanCount > 20) {
+    if (members.size > 20) {
         await channel.send({
             content: "This server is too big to start a map rush game!"
         });
@@ -56,7 +56,12 @@ export async function createPointGame(client: Client, channel: Channel) {
         .setLabel("Open Map")
         .setStyle(ButtonStyle.Link);
 
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+    const infoButton = new ButtonBuilder()
+        .setCustomId("point-game-info")
+        .setLabel("Info")
+        .setStyle(ButtonStyle.Secondary);
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button, infoButton);
 
     const message = await channel.send({
         embeds: [embed],
@@ -92,3 +97,83 @@ export async function createPointGame(client: Client, channel: Channel) {
         });
     }
 }
+
+export const updatePointGames = async (client: Client) => {
+    try {
+        const games = await db.select().from(pointGame);
+        for (const game of games) {
+            // Find message
+            const channel = await client.channels.cache.get(game.channelId);
+            if (!channel || !channel.isTextBased()) continue;
+
+            const message = await channel.messages.fetch(game.messageId);
+            if (!message) continue;
+
+            // Get all points owned by users in this game
+            const points = await db.select().from(pointGamePoints).where(eq(pointGamePoints.gameId, game.id));
+
+            // Group points by owner
+            const pointsByOwner = points.reduce(
+                (acc, point) => {
+                    if (point.claimedByUserId) {
+                        acc[point.claimedByUserId] = (acc[point.claimedByUserId] || 0) + 1;
+                    }
+                    return acc;
+                },
+                {} as Record<string, number>
+            );
+
+            // Update scores for each player - increment their score by the number of points they own
+            for (const [ownerId, pointCount] of Object.entries(pointsByOwner)) {
+                console.log(`Updating score for ${ownerId} by ${pointCount}`);
+                await db
+                    .update(pointGamePlayers)
+                    .set({ score: sql`score + ${pointCount}` })
+                    .where(and(eq(pointGamePlayers.gameId, game.id), eq(pointGamePlayers.userId, ownerId)));
+            }
+
+            // Get all players and their scores
+            const players = await db
+                .select()
+                .from(pointGamePlayers)
+                .where(eq(pointGamePlayers.gameId, game.id))
+                .orderBy(desc(pointGamePlayers.score));
+
+            // Get the number of claimable points
+            const claimablePointsCount = await getClaimablePointsCount(client, game.id);
+
+            // Update the embed
+            const embed = message.embeds[0];
+            embed.fields[0].value = claimablePointsCount.toString();
+            embed.fields[1].value = players
+                .map((player, i) => `${i + 1}. <@${player.userId}> - ${player.score}`)
+                .join("\n");
+            await message.edit({ embeds: [embed] });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const getClaimablePointsCount = async (client: Client, gameId: string) => {
+    // Find all unavailable points from database - claimed less than 2 days ago
+    const unavailablePoints = await db
+        .select()
+        .from(pointGamePoints)
+        .where(
+            and(
+                eq(pointGamePoints.gameId, gameId),
+                and(
+                    isNotNull(pointGamePoints.claimedByUserId),
+                    sql`${pointGamePoints.claimedAt} > NOW() - INTERVAL '2 days'`
+                )
+            )
+        );
+
+    // Filter out points that are unclaimable
+    const newPoints = pointsOfInterest.filter(
+        (point) => !unavailablePoints.some((dbPoint) => dbPoint.pointId === point.id)
+    );
+
+    return newPoints.length;
+};

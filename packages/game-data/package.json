@@ -2,7 +2,7 @@
     "name": "game-data",
     "version": "0.0.0",
     "private": true,
-    "main": "dist/index.js",
+    "main": "index.ts",
     "scripts": {
         "dev": "tsc --watch",
         "build": "tsc"

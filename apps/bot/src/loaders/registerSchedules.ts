@@ -1,6 +1,7 @@
 import { sendBounty } from "@/utils/bounties";
 import { updateButtonGames } from "@/utils/buttonGame";
 import { deleteExpiredTokens } from "@/utils/loginTokens";
+import { updatePointGames } from "@/utils/pointGame";
 import { randomJoin } from "@/utils/voiceChannel";
 import { Client } from "discord.js";
 import cron from "node-cron";
@@ -34,5 +35,11 @@ export default (client: Client) => {
         randomJoin(client);
         // Delete expired login tokens
         deleteExpiredTokens();
+    });
+
+    // Every hour
+    cron.schedule("0 * * * *", async () => {
+        // Update point games
+        updatePointGames(client);
     });
 };
