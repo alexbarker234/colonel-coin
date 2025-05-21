@@ -3,6 +3,7 @@ import { updateButtonGames } from "@/features/bounties/buttonGame";
 import { updatePointGames } from "@/features/bounties/pointGame";
 import { deleteExpiredTokens } from "@/features/loginTokens";
 import { randomJoin } from "@/features/voiceChannel";
+import { bountySchedule, db, eq } from "database";
 import { Client } from "discord.js";
 import cron from "node-cron";
 
@@ -10,26 +11,31 @@ export default (client: Client) => {
     // at 12AM every 2 days choose a random time on that day to send the bounty
     cron.schedule(
         "0 0 */2 * *",
-        () => {
+        async () => {
             const randomTime = Math.floor(Math.random() * 24 * 60 * 60 * 1000);
+            const nextScheduledTime = new Date(Date.now() + randomTime);
 
-            // DEBUG - LOG TIME
-            const hours = Math.floor(randomTime / (60 * 60 * 1000));
-            const minutes = Math.floor((randomTime % (60 * 60 * 1000)) / (60 * 1000));
-            const ampm = hours >= 12 ? "PM" : "AM";
-            const formattedHours = hours % 12 || 12;
-            console.log(`The bounty will be sent at ${formattedHours}:${minutes.toString().padStart(2, "0")} ${ampm}`);
+            // Save the next scheduled time to the database
+            await db.insert(bountySchedule).values({ nextScheduledTime }).onConflictDoUpdate({
+                target: bountySchedule.id,
+                set: { nextScheduledTime }
+            });
 
-            setTimeout(() => {
-                try {
-                    sendBounty(client);
-                } catch (error) {
-                    console.error(error);
-                }
-            }, randomTime);
+            sendBountyAtTime(client, nextScheduledTime);
         },
         { timezone: "Australia/Perth" }
     );
+
+    // On bot startup, check if there's a pending bounty that needs to be sent
+    const checkPendingBounty = async () => {
+        const schedule = await db.select().from(bountySchedule).where(eq(bountySchedule.id, 1)).limit(1);
+        if (schedule.length === 0) return;
+
+        const { nextScheduledTime } = schedule[0];
+        sendBountyAtTime(client, nextScheduledTime);
+    };
+
+    checkPendingBounty();
 
     // Every 2 minutes
     cron.schedule("*/2 * * * *", async () => {
@@ -46,4 +52,20 @@ export default (client: Client) => {
         // Update point games
         updatePointGames(client);
     });
+};
+
+const sendBountyAtTime = async (client: Client, dateTime: Date) => {
+    const now = new Date();
+    if (dateTime > now) {
+        const timeUntilBounty = dateTime.getTime() - now.getTime();
+        console.log(`Scheduled bounty for ${dateTime.toLocaleString("en-AU", { timeZone: "Australia/Perth" })}`);
+
+        setTimeout(() => {
+            try {
+                sendBounty(client);
+            } catch (error) {
+                console.error(error);
+            }
+        }, timeUntilBounty);
+    }
 };

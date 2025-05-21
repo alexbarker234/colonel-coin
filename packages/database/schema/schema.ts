@@ -34,6 +34,12 @@ export const bounties = pgTable("bounties", {
     releasedAt: timestamp("released_at").notNull().defaultNow(),
 });
 
+// Store the next bounty schedule time
+export const bountySchedule = pgTable("bounty_schedule", {
+    id: integer("id").primaryKey().default(1),
+    nextScheduledTime: timestamp("next_scheduled_time").notNull(),
+});
+
 // Guild settings table
 export const guildSettings = pgTable("guild_settings", {
     id: varchar("id").primaryKey(),
