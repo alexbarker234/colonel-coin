@@ -25,7 +25,7 @@ export default {
         const members = await guild.members.fetch();
         const humanCount = members.filter((member) => !member.user.bot).size;
 
-        // build embed
+        // Build embed
         const embed = new EmbedBuilder()
             .setTitle(`${emojis.chip} Coin Check ${emojis.chip}`)
             .setDescription(`${humanCount} people need to accept this coin check`)
@@ -42,7 +42,7 @@ export default {
         const row = new ActionRowBuilder<ButtonBuilder>().addComponents(acceptButton, rejectButton);
 
         // in memory storage
-        const acceptedUsers = new Set([interaction.user.id]); // Initialize with command user
+        const acceptedUsers = new Set([interaction.user.id]);
 
         const initialEmbed = EmbedBuilder.from(embed).setDescription(
             `1/${humanCount} people have accepted\n\nAccepted by:\n<@${interaction.user.id}>`
@@ -51,11 +51,14 @@ export default {
         const response = await interaction.reply({
             embeds: [initialEmbed],
             components: [row],
-            fetchReply: true
+            withResponse: true
         });
 
-        const collector = response.createMessageComponentCollector({
-            time: 1000 * 60 * 60
+        if (!response.resource?.message) return;
+
+        // 24 hours
+        const collector = response.resource.message.createMessageComponentCollector({
+            time: 1000 * 60 * 60 * 24
         });
 
         collector.on("collect", async (i) => {
