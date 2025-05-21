@@ -1,11 +1,9 @@
 import { auth } from "@/auth";
+import { CLAIM_COOLDOWN, DISTANCE_THRESHOLD } from "@/constants";
 import { calculateDistance } from "@/utils/mapUtils";
 import { and, db, eq, gt, pointGame, pointGamePoints, users } from "database";
 import { pointsOfInterest } from "game-data";
 import { NextResponse } from "next/server";
-
-// TODO put this in a constants file or something
-const distanceThreshold = 0.25;
 
 export async function POST(request: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const session = await auth();
@@ -44,7 +42,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ gam
   if (!longitude || !latitude) return NextResponse.json({ error: "Missing longitude/latitude" }, { status: 400 });
 
   // Check if point was claimed in last 2 days
-  const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
+  const twoDaysAgo = new Date(Date.now() - CLAIM_COOLDOWN);
   const recentlyClaimed = await db
     .select()
     .from(pointGamePoints)
@@ -70,7 +68,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ gam
 
   // Check if the point is within the distance threshold
   const distance = calculateDistance(point.position[0], point.position[1], longitude, latitude);
-  if (distance > distanceThreshold) {
+  if (distance > DISTANCE_THRESHOLD) {
     return NextResponse.json({ error: "Point is not within the distance threshold" }, { status: 400 });
   }
 

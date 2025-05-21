@@ -1,7 +1,7 @@
+import { CLAIM_COOLDOWN, DISTANCE_THRESHOLD } from "@/constants";
+import { useClaimPoint, useGetPoints } from "@/hooks/pointGame";
 import { PointData } from "@/types";
 import { calculateDistance } from "@/utils/mapUtils";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { PointOfInterest, pointsOfInterest } from "game-data";
 import { divIcon } from "leaflet";
 import "leaflet-defaulticon-compatibility";
@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
 import { customIcons } from "../lib/mapIcons";
 import PulseLoader from "./PulseLoader";
-
 function MapEvents() {
   useMapEvents({
     click: (e) => {
@@ -25,7 +24,6 @@ function MapEvents() {
 
 const zoom = 13;
 const defaultPosition: [number, number] = [-31.957139, 115.807917];
-const distanceThreshold = 0.25;
 // dont think theres an existing type for this
 interface MapRef {
   setView: (position: [number, number], zoom: number) => void;
@@ -40,13 +38,7 @@ export default function Map({ gameId }: { gameId: string }) {
   const [map, setMap] = useState<MapRef | null>(null);
   const { data: session } = useSession();
 
-  const { isLoading, data: pointsData } = useQuery({
-    queryKey: ["points"],
-    queryFn: async () => {
-      const response = await axios.get(`/api/point-game/${gameId}/info`);
-      return response.data.points as PointData[];
-    }
-  });
+  const { isLoading, data: pointsData } = useGetPoints(gameId);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -71,25 +63,6 @@ export default function Map({ gameId }: { gameId: string }) {
       setError("Geolocation is not supported by your browser");
     }
   }, []);
-
-  const handleClaim = async (pointId: string) => {
-    console.log(`Claim button clicked for ${pointId}!`);
-    if (!userPosition) return;
-
-    try {
-      const response = await axios.post("/api/point/claim", {
-        longitude: userPosition[1],
-        latitude: userPosition[0],
-        pointId: pointId
-      });
-
-      if (response.data.success) {
-        console.log("Point claimed successfully!");
-      }
-    } catch (error) {
-      console.error("Error claiming point:", error);
-    }
-  };
 
   const handleDoubleClick = (point: PointOfInterest) => {
     if (!map) return;
@@ -128,9 +101,9 @@ export default function Map({ gameId }: { gameId: string }) {
             key={point.name}
             point={point}
             currentUserId={session?.user?.id}
+            gameId={gameId}
             claimInfo={isLoading ? null : pointsData?.find((p) => p.id === point.id)}
             userPosition={userPosition}
-            handleClaim={handleClaim}
             onDoubleClick={() => handleDoubleClick(point)}
           />
         ))}
@@ -162,14 +135,14 @@ function PointOfInterestMarker({
   currentUserId,
   userPosition,
   claimInfo,
-  handleClaim,
+  gameId,
   onDoubleClick
 }: {
   point: PointOfInterest;
   currentUserId: string;
   userPosition: [number, number] | null;
   claimInfo: PointData | null;
-  handleClaim: (id: string) => void;
+  gameId: string;
   onDoubleClick?: (point: PointOfInterest) => void;
 }) {
   const pointDistance = userPosition
@@ -183,8 +156,7 @@ function PointOfInterestMarker({
     : customIcons.markerBlue;
 
   const getTimeUntilClaimable = (claimedAt: Date) => {
-    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-    const timeUntilClaimable = new Date(claimedAt.getTime() + twoDaysInMs);
+    const timeUntilClaimable = new Date(claimedAt.getTime() + CLAIM_COOLDOWN);
     const now = new Date();
 
     if (timeUntilClaimable <= now) return "Claimable now";
@@ -195,6 +167,12 @@ function PointOfInterestMarker({
 
     return `Claimable in ${hours}h ${minutes}m`;
   };
+
+  const isClaimable =
+    !claimInfo?.claimedBy ||
+    (claimInfo.claimedBy && new Date(claimInfo.claimedBy.claimedAt).getTime() + CLAIM_COOLDOWN <= new Date().getTime());
+
+  const { mutate: claimPoint } = useClaimPoint();
 
   return (
     <Marker
@@ -207,34 +185,35 @@ function PointOfInterestMarker({
         }
       }}
     >
-      <Popup maxWidth={300} minWidth={180}>
+      <Popup>
         <div className="flex flex-col items-center text-center">
           <div className="font-bold">{point.name}</div>
           {pointDistance && <div>Distance: {pointDistance.toFixed(2)} km</div>}
           {claimInfo?.claimedBy && (
-            <div className=" mt-2 border rounded-md p-2">
+            <div className="flex flex-col mt-2 border rounded-md px-4 py-2">
               <div className="font-bold">Claimed by</div>
-              <div className="flex items-center gap-2">
+              {/* this is some ridiculous jank with mr since the contents keep overflowing due to padding */}
+              <div className="flex items-center gap-2 w-full justify-center mr-2">
                 <Image
                   src={claimInfo.claimedBy.avatar}
-                  alt={claimInfo.claimedBy.username}
+                  alt=""
                   width={128}
                   height={128}
                   className="w-6 h-6 rounded-full"
                 />
-                <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                  {claimInfo.claimedBy.username}
-                </div>
+                <div className="text-xs">{claimInfo.claimedBy.username}</div>
               </div>
               <div className="text-xs text-gray-500">
                 {getTimeUntilClaimable(new Date(claimInfo.claimedBy.claimedAt))}
               </div>
             </div>
           )}
-          {userPosition && pointDistance < distanceThreshold && !claimInfo?.claimedBy && (
+          {userPosition && pointDistance < DISTANCE_THRESHOLD && isClaimable && (
             <button
-              onClick={() => handleClaim(point.id)}
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              onClick={() =>
+                claimPoint({ gameId, pointId: point.id, longitude: userPosition[1], latitude: userPosition[0] })
+              }
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
             >
               Claim
             </button>
