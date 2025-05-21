@@ -5,18 +5,19 @@ import { db, eq, pointGame, pointGamePoints } from "database";
 import { pointsOfInterest } from "game-data";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { gameId: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const gameId = params.gameId;
+  const { gameId } = await params;
+
   // Check game exists
   const game = await db
     .select()
     .from(pointGame)
-    .where(eq(pointGame.id, params.gameId))
+    .where(eq(pointGame.id, gameId))
     .limit(1)
     .then((rows) => rows[0]);
   if (!game) {

@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
 import { customIcons } from "../lib/mapIcons";
+import PulseLoader from "./PulseLoader";
 
 function MapEvents() {
   useMapEvents({
@@ -28,9 +29,12 @@ const distanceThreshold = 0.25;
 interface MapRef {
   setView: (position: [number, number], zoom: number) => void;
 }
+type PositionStatus = "loading" | "denied" | "unavailable" | "success";
 
 export default function Map({ gameId }: { gameId: string }) {
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
+  const [positionStatus, setPositionStatus] = useState<PositionStatus>("loading");
+
   const [error, setError] = useState<string | null>(null);
   const [map, setMap] = useState<MapRef | null>(null);
   const { data: session } = useSession();
@@ -49,11 +53,18 @@ export default function Map({ gameId }: { gameId: string }) {
         (position) => {
           const newPosition: [number, number] = [position.coords.latitude, position.coords.longitude];
           setUserPosition(newPosition);
+          setPositionStatus("success");
         },
         (error) => {
           setError("Unable to retrieve your location");
           console.error("Error getting location:", error);
-        }
+          if (error.code === 1) {
+            setPositionStatus("denied");
+          } else {
+            setPositionStatus("unavailable");
+          }
+        },
+        { enableHighAccuracy: true }
       );
     } else {
       setError("Geolocation is not supported by your browser");
@@ -83,7 +94,7 @@ export default function Map({ gameId }: { gameId: string }) {
     if (!map) return;
     map.setView(point.position, 15);
   };
-  console.log({ isLoading, pointsData });
+  console.log(userPosition);
 
   return (
     <div className="h-full relative">
@@ -96,6 +107,8 @@ export default function Map({ gameId }: { gameId: string }) {
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <MapEvents />
+        <LocationInfo positionStatus={positionStatus} />
+
         {userPosition && (
           <Marker position={userPosition} icon={customIcons.markerGreen}>
             <Popup>Your Current Location</Popup>
@@ -117,6 +130,24 @@ export default function Map({ gameId }: { gameId: string }) {
     </div>
   );
 }
+
+function LocationInfo({ positionStatus }: { positionStatus: PositionStatus }) {
+  if (positionStatus === "success") return null;
+
+  return (
+    <div className="flex items-center justify-center w-fit p-2 rounded-full mx-auto my-2 absolute top-0 left-0 right-0 bg-black/50 text-white py-2 text-center z-[1010]">
+      {positionStatus === "loading" && (
+        <>
+          <span className="mr-2">Loading your position</span>
+          <PulseLoader />
+        </>
+      )}
+      {positionStatus === "denied" && <span>Permission denied. Please enable location services.</span>}
+      {positionStatus === "unavailable" && <span>Location services unavailable.</span>}
+    </div>
+  );
+}
+
 function PointOfInterestMarker({
   point,
   currentUserId,

@@ -7,17 +7,19 @@ import { NextResponse } from "next/server";
 // TODO put this in a constants file or something
 const distanceThreshold = 0.25;
 
-export async function POST(request: Request, { params }: { params: { gameId: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ gameId: string }> }) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { gameId } = await params;
+
   // Check game exists
   const game = await db
     .select()
     .from(pointGame)
-    .where(eq(pointGame.id, params.gameId))
+    .where(eq(pointGame.id, gameId))
     .limit(1)
     .then((rows) => rows[0]);
   if (!game) {
@@ -37,7 +39,6 @@ export async function POST(request: Request, { params }: { params: { gameId: str
   }
 
   const { longitude, latitude, pointId } = await request.json();
-  const gameId = params.gameId;
 
   if (!pointId) return NextResponse.json({ error: "Missing pointId" }, { status: 400 });
   if (!longitude || !latitude) return NextResponse.json({ error: "Missing longitude/latitude" }, { status: 400 });
