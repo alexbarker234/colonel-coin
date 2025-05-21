@@ -8,6 +8,7 @@ dotenv.config();
 import registerBounties from "@/loaders/registerBounties";
 import registerCommands from "@/loaders/registerCommands";
 import registerListeners from "@/loaders/registerListeners";
+import registerInteractionHandlers from "./loaders/registerInteractionHandlers";
 import registerSchedules from "./loaders/registerSchedules";
 
 const token = process.env.BOT_TOKEN;
@@ -22,5 +23,6 @@ registerCommands(client);
 registerListeners(client);
 registerSchedules(client);
 registerBounties(client);
+registerInteractionHandlers(client);
 
 client.login(token);

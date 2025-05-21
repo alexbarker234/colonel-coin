@@ -1,9 +1,22 @@
-import { handleButtonPress } from "@/utils/buttonGame";
 import { Client, Interaction, MessageFlags } from "discord.js";
 
 module.exports = async (client: Client, interaction: Interaction) => {
-    await handleSlashCommand(interaction);
-    await handleButtonPress(interaction);
+    if (interaction.isChatInputCommand()) {
+        await handleSlashCommand(interaction);
+    } else {
+        await handleComponentInteraction(interaction);
+    }
+};
+
+const handleComponentInteraction = async (interaction: Interaction) => {
+    if (!interaction.isMessageComponent()) return;
+
+    const handler = interaction.client.interactionHandlers.get(interaction.customId);
+    if (!handler) {
+        console.error(`No interaction handler found for ${interaction.customId}`);
+        return;
+    }
+    await handler.execute(interaction);
 };
 
 const handleSlashCommand = async (interaction: Interaction) => {

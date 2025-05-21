@@ -1,5 +1,13 @@
 import { and, buttonGame, buttonGamePlayers, db, desc, eq } from "database";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, Interaction } from "discord.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
+    Channel,
+    Client,
+    EmbedBuilder
+} from "discord.js";
 import { getUser } from "./user";
 
 export const createButtonGame = async (client: Client, channel: Channel) => {
@@ -47,11 +55,9 @@ export const createButtonGame = async (client: Client, channel: Channel) => {
     });
 };
 
-export const handleButtonPress = async (interaction: Interaction) => {
+export const handleButtonPress = async (interaction: ButtonInteraction) => {
     try {
         await getUser(interaction.user.id);
-
-        if (!interaction.isButton() || interaction.customId !== "button_game") return;
 
         // Get the game data from the database
         const games = await db
