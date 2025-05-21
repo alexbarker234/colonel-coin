@@ -1,9 +1,8 @@
-import BotClient from "@/structures/BotClient";
 import { and, buttonGame, buttonGamePlayers, db, desc, eq } from "database";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, EmbedBuilder, Interaction } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder, Interaction } from "discord.js";
 import { getUser } from "./user";
 
-export const createButtonGame = async (client: BotClient, channel: Channel) => {
+export const createButtonGame = async (client: Client, channel: Channel) => {
     if (!channel.isTextBased() || channel.isDMBased()) return;
 
     const embed = new EmbedBuilder()
@@ -114,7 +113,7 @@ export const handleButtonPress = async (interaction: Interaction) => {
     }
 };
 
-export const updateButtonGames = async (client: BotClient) => {
+export const updateButtonGames = async (client: Client) => {
     try {
         const games = await db.select().from(buttonGame);
         for (const game of games) {

@@ -1,7 +1,6 @@
 import { ActivityType, Client } from "discord.js";
-import BotClient from "@/structures/BotClient";
 
-module.exports = (client: BotClient) => {
+module.exports = (client: Client) => {
     if (!client.user || !client.application) return;
 
     console.log(`${client.user.username} is online`);

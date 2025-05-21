@@ -1,7 +1,6 @@
-import BotClient from "@/structures/BotClient";
 import { bounties, db, guildSettings, isNotNull } from "database";
-import { EmbedBuilder, Guild } from "discord.js";
-import { bountyData } from "game-data";
+import { Client, EmbedBuilder, Guild } from "discord.js";
+import { bountyData } from "game-data"; // why cant it find this module? tsx loads it fine.
 
 interface Bounty {
     id: number;
@@ -12,7 +11,7 @@ interface Bounty {
     penalty?: string;
 }
 
-export const sendBounty = async (client: BotClient, bountyId?: number, markAsUsed = true) => {
+export const sendBounty = async (client: Client, bountyId?: number, markAsUsed = true) => {
     const guilds = client.guilds.cache;
 
     // Choose bounty
@@ -66,7 +65,7 @@ export const sendBounty = async (client: BotClient, bountyId?: number, markAsUse
     }
 };
 
-export const createBountyEmbed = (bounty: Bounty, client: BotClient) => {
+export const createBountyEmbed = (bounty: Bounty, client: Client) => {
     const embed = new EmbedBuilder()
         .setTitle("🎯 New Bounty!")
         .setDescription(bounty.description)

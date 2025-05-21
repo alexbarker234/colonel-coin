@@ -1,11 +1,11 @@
-import BotClient from "@/structures/BotClient";
 import { sendBounty } from "@/utils/bounties";
 import { updateButtonGames } from "@/utils/buttonGame";
 import { deleteExpiredTokens } from "@/utils/loginTokens";
 import { randomJoin } from "@/utils/voiceChannel";
+import { Client } from "discord.js";
 import cron from "node-cron";
 
-export default (client: BotClient) => {
+export default (client: Client) => {
     // at 12AM every 2 days choose a random time on that day to send the bounty
     cron.schedule("0 0 */2 * *", () => {
         const randomTime = Math.floor(Math.random() * 24 * 60 * 60 * 1000);

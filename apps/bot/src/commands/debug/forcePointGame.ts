@@ -1,4 +1,3 @@
-import BotClient from "@/structures/BotClient";
 import { createPointGame } from "@/utils/pointGame";
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
@@ -14,7 +13,7 @@ module.exports = {
             return;
         }
 
-        await createPointGame(interaction.client as BotClient, interaction.channel);
+        await createPointGame(interaction.client, interaction.channel);
         interaction.reply({ content: "Point game sent!", flags: MessageFlags.Ephemeral });
     }
 };

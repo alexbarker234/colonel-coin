@@ -1,11 +1,10 @@
-import BotClient from "@/structures/BotClient";
 import { createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
-import { VoiceBasedChannel } from "discord.js";
+import { Client, VoiceBasedChannel } from "discord.js";
 import { join } from "path";
 
 const soundPath = join(__dirname, "../assets/augh.mp3");
 
-export const randomJoin = async (client: BotClient) => {
+export const randomJoin = async (client: Client) => {
     try {
         // Loop over each guild and find a voice channel with people
         for (const guild of client.guilds.cache.values()) {

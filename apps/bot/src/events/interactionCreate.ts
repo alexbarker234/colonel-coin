@@ -1,8 +1,7 @@
-import BotClient from "@/structures/BotClient";
 import { handleButtonPress } from "@/utils/buttonGame";
-import { Interaction, MessageFlags } from "discord.js";
+import { Client, Interaction, MessageFlags } from "discord.js";
 
-module.exports = async (client: BotClient, interaction: Interaction) => {
+module.exports = async (client: Client, interaction: Interaction) => {
     await handleSlashCommand(interaction);
     await handleButtonPress(interaction);
 };
@@ -10,7 +9,7 @@ module.exports = async (client: BotClient, interaction: Interaction) => {
 const handleSlashCommand = async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    const command = (interaction.client as BotClient).commands.get(interaction.commandName);
+    const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
         console.error(`No command matching ${interaction.commandName} was found.`);

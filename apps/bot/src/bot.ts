@@ -1,17 +1,17 @@
+import { Client } from "discord.js";
 import dotenv from "dotenv";
 dotenv.config();
 
 import registerBounties from "@/loaders/registerBounties";
 import registerCommands from "@/loaders/registerCommands";
 import registerListeners from "@/loaders/registerListeners";
-import BotClient from "@/structures/BotClient";
 import registerSchedules from "./loaders/registerSchedules";
 
 const token = process.env.BOT_TOKEN;
 
 console.log("Bot is starting...");
 
-const client = new BotClient({
+const client = new Client({
     intents: ["Guilds", "GuildMessages", "GuildMembers", "GuildVoiceStates"]
 });
 

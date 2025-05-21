@@ -1,4 +1,3 @@
-import BotClient from "@/structures/BotClient";
 import { chooseBounty, sendBounty } from "@/utils/bounties";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 module.exports = {
@@ -21,7 +20,7 @@ module.exports = {
                 await interaction.reply({ content: "No bounty found", flags: MessageFlags.Ephemeral });
                 return;
             }
-            await sendBounty(interaction.client as BotClient, bounty.id, markAsUsed ?? false);
+            await sendBounty(interaction.client, bounty.id, markAsUsed ?? false);
             await interaction.reply({ content: "Bounty sent", flags: MessageFlags.Ephemeral });
         } catch (error) {
             console.error(error);

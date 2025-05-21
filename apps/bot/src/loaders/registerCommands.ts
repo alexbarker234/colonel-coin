@@ -1,10 +1,9 @@
-import BotClient from "@/structures/BotClient";
 import { SlashCommand } from "@/types";
-import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
+import { Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
 import fs from "fs";
 import { dirname, join } from "path";
 
-export default (client: BotClient) => {
+export default (client: Client) => {
     // WHAAAAT THE HECK ISS THISS NAMMMMEE????>!!
     const commandsJSON: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
 

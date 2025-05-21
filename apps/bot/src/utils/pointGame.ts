@@ -1,8 +1,7 @@
-import BotClient from "@/structures/BotClient";
 import { db, eq, pointGame, pointGamePlayers, users } from "database";
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, EmbedBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder } from "discord.js";
 
-export async function createPointGame(client: BotClient, channel: Channel) {
+export async function createPointGame(client: Client, channel: Channel) {
     if (!channel.isTextBased() || channel.isDMBased()) return;
 
     const members = await channel.guild.members.fetch();
