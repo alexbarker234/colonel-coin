@@ -1,16 +1,29 @@
 import { guildSettings } from "database";
-import { Client, CommandInteraction, EmbedBuilder, Guild, Interaction, SlashCommandBuilder } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    Client,
+    EmbedBuilder,
+    Events,
+    Guild,
+    Interaction,
+    SlashCommandBuilder,
+    SlashCommandOptionsOnlyBuilder
+} from "discord.js";
 
 export type GuildSettings = typeof guildSettings.$inferSelect;
 
-export interface SlashCommand {
-    data: SlashCommandBuilder;
+export interface SlashCommandHandler {
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
     type?: string;
-    execute: (interaction: CommandInteraction) => Promise<void>;
+    execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
     debug?: boolean;
 }
+export interface EventHandler {
+    name: Events;
+    execute: (client: Client, ...args: any[]) => Promise<void>;
+}
 
-export interface Bounty {
+export interface BountyHandler {
     id: number;
     modifyEmbed?: (embed: EmbedBuilder) => void;
     postSendBounty?: (client: Client, guild: Guild, settings: GuildSettings) => void;

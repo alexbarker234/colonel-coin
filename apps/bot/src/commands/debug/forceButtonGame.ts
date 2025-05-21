@@ -1,7 +1,8 @@
+import { SlashCommandHandler } from "@/types";
 import { createButtonGame } from "@/utils/buttonGame";
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder().setName("forcebuttongame").setDescription("Force a button game to send"),
     debug: true,
     async execute(interaction: CommandInteraction) {
@@ -16,4 +17,4 @@ module.exports = {
         await createButtonGame(interaction.client, interaction.channel);
         interaction.reply({ content: "Button game sent!", flags: MessageFlags.Ephemeral });
     }
-};
+} satisfies SlashCommandHandler;

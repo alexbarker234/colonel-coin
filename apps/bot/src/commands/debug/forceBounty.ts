@@ -1,6 +1,8 @@
+import { SlashCommandHandler } from "@/types";
 import { chooseBounty, sendBounty } from "@/utils/bounties";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
-module.exports = {
+
+export default {
     data: new SlashCommandBuilder()
         .setName("forcebounty")
         .setDescription("Force a bounty to be chosen")
@@ -27,4 +29,4 @@ module.exports = {
             await interaction.reply({ content: "Error choosing bounty", flags: MessageFlags.Ephemeral });
         }
     }
-};
+} satisfies SlashCommandHandler;

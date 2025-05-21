@@ -1,3 +1,4 @@
+import { EventHandler } from "@/types";
 import { Client } from "discord.js";
 import fs from "fs";
 import { dirname, join } from "path";
@@ -10,9 +11,8 @@ export default (client: Client) => {
     const path = join(rootDir, "events");
     const eventFiles = fs.readdirSync(path);
     for (const eventFile of eventFiles) {
-        const event = require(`${path}/${eventFile}`);
-        const eventName = eventFile.split(".")[0];
-        client.on(eventName, event.bind(null, client));
-        console.log(`Registered event listener: ${eventName}`);
+        const event: EventHandler = require(join(path, eventFile)).default;
+        client.on(event.name as string, event.execute.bind(null, client));
+        console.log(`Registered event listener: ${event.name}`);
     }
 };

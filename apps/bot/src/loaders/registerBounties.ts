@@ -1,4 +1,4 @@
-import { Bounty } from "@/types";
+import { BountyHandler } from "@/types";
 import { Client } from "discord.js";
 import fs from "fs";
 import { dirname, join } from "path";
@@ -11,7 +11,7 @@ export default (client: Client) => {
     const bountyFiles = fs.readdirSync(path).filter((file) => file.endsWith(".ts") && file !== "README.md");
 
     for (const bountyFile of bountyFiles) {
-        const bounty: Bounty = require(`${path}/${bountyFile}`).default;
+        const bounty: BountyHandler = require(`${path}/${bountyFile}`).default;
         if (bounty.id) {
             client.bounties.set(bounty.id, bounty);
             console.log(`Registered bounty: ${bountyFile} with id ${bounty.id}`);

@@ -1,12 +1,16 @@
-import { Client, Interaction, MessageFlags } from "discord.js";
+import { EventHandler } from "@/types";
+import { Client, Events, Interaction, MessageFlags } from "discord.js";
 
-module.exports = async (client: Client, interaction: Interaction) => {
-    if (interaction.isChatInputCommand()) {
-        await handleSlashCommand(interaction);
-    } else {
-        await handleComponentInteraction(interaction);
+export default {
+    name: Events.InteractionCreate,
+    execute: async (client: Client, interaction: Interaction) => {
+        if (interaction.isChatInputCommand()) {
+            await handleSlashCommand(interaction);
+        } else {
+            await handleComponentInteraction(interaction);
+        }
     }
-};
+} satisfies EventHandler;
 
 const handleComponentInteraction = async (interaction: Interaction) => {
     if (!interaction.isMessageComponent()) return;

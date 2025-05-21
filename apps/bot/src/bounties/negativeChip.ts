@@ -1,7 +1,7 @@
-import { Bounty } from "@/types";
+import { BountyHandler } from "@/types";
 import { EmbedBuilder } from "discord.js";
 
-const negativeChip: Bounty = {
+export default {
     id: 29,
     modifyEmbed: (embed: EmbedBuilder) => {
         // RANDOM CHIP BOUNTY, choose the chip and add it as a field
@@ -14,6 +14,4 @@ const negativeChip: Bounty = {
             value: randomChipColour
         });
     }
-};
-
-export default negativeChip;
+} satisfies BountyHandler;

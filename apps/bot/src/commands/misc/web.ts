@@ -1,3 +1,4 @@
+import { SlashCommandHandler } from "@/types";
 import { db, loginTokens } from "database";
 import {
     ActionRowBuilder,
@@ -9,7 +10,7 @@ import {
     SlashCommandBuilder
 } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder().setName("web").setDescription("Get a login link for the website"),
     async execute(interaction: CommandInteraction) {
         const token = await db
@@ -35,4 +36,4 @@ module.exports = {
 
         await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
     }
-};
+} satisfies SlashCommandHandler;

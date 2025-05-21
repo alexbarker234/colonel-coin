@@ -1,3 +1,4 @@
+import { SlashCommandHandler } from "@/types";
 import { emojis } from "@/utils/emojis";
 import {
     ActionRowBuilder,
@@ -8,7 +9,8 @@ import {
     MessageFlags,
     SlashCommandBuilder
 } from "discord.js";
-module.exports = {
+
+export default {
     data: new SlashCommandBuilder().setName("coincheck").setDescription("Call a coin check"),
     async execute(interaction: CommandInteraction) {
         // Get count of real users in guild
@@ -115,4 +117,4 @@ module.exports = {
             }
         });
     }
-};
+} satisfies SlashCommandHandler;

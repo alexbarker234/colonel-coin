@@ -1,8 +1,9 @@
+import { SlashCommandHandler } from "@/types";
 import { getUser } from "@/utils/user";
 import { db, eq, users } from "database";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName("report")
         .setDescription("Report your current money balance")
@@ -30,4 +31,4 @@ module.exports = {
             flags: MessageFlags.Ephemeral
         });
     }
-};
+} satisfies SlashCommandHandler;

@@ -1,7 +1,8 @@
+import { SlashCommandHandler } from "@/types";
 import { db, guildSettings } from "database";
 import { ChatInputCommandInteraction, MessageFlags, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName("setchannel")
         .setDescription("Sets the current channel as a specific channel")
@@ -16,10 +17,11 @@ module.exports = {
 
     async execute(interaction: ChatInputCommandInteraction) {
         if (!interaction.guildId || !interaction.channelId) {
-            return await interaction.reply({
+            await interaction.reply({
                 content: "This command can only be used in a server!",
                 flags: MessageFlags.Ephemeral
             });
+            return;
         }
 
         const type = interaction.options.getString("type");
@@ -41,4 +43,4 @@ module.exports = {
             flags: MessageFlags.Ephemeral
         });
     }
-};
+} satisfies SlashCommandHandler;

@@ -1,4 +1,4 @@
-import { SlashCommand } from "@/types";
+import { SlashCommandHandler } from "@/types";
 import { Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
 import fs from "fs";
 import { dirname, join } from "path";
@@ -16,7 +16,7 @@ export default (client: Client) => {
             .readdirSync(join(rootDir, "commands", dirName))
             .filter((file: string) => file.endsWith(".ts"));
         for (const file of commandFiles) {
-            const command: SlashCommand = require(join(rootDir, "commands", dirName, `${file}`));
+            const command: SlashCommandHandler = require(join(rootDir, "commands", dirName, `${file}`)).default;
 
             //command.type = dirName;
             if (command.debug && !process.env.DEBUG) {
