@@ -2,7 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { FaDiscord } from "react-icons/fa";
+import Link from "next/link";
+import { FaDiscord, FaMap } from "react-icons/fa";
 export default function Home() {
   const { data: session, status } = useSession();
 
@@ -32,7 +33,21 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <WelcomeMessage />
+      {/* Games */}
+      <GameCard title="Point Claim Game" icon={<FaMap />} href="/map" />
     </div>
+  );
+}
+
+function GameCard({ icon, title, href }: { icon: React.ReactNode; title: string; href: string }) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl transition-opacity cursor-pointer hover:opacity-60"
+    >
+      <div className="text-2xl">{icon}</div>
+      <h2 className="text-xl font-semibold">{title}</h2>
+    </Link>
   );
 }
 

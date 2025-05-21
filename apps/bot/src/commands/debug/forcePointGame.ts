@@ -1,0 +1,20 @@
+import BotClient from "@/structures/BotClient";
+import { createPointGame } from "@/utils/pointGame";
+import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
+
+module.exports = {
+    data: new SlashCommandBuilder().setName("forcepointgame").setDescription("Force a point game to send"),
+    debug: true,
+    async execute(interaction: CommandInteraction) {
+        if (!interaction.channel || !interaction.channel.isTextBased()) {
+            await interaction.reply({
+                content: "This command can only be used in a text channel!",
+                flags: MessageFlags.Ephemeral
+            });
+            return;
+        }
+
+        await createPointGame(interaction.client as BotClient, interaction.channel);
+        interaction.reply({ content: "Point game sent!", flags: MessageFlags.Ephemeral });
+    }
+};

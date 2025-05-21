@@ -1,0 +1,1 @@
+ALTER TABLE "point_game" ADD COLUMN "game_started_at" timestamp with time zone DEFAULT now() NOT NULL;
