@@ -25,7 +25,7 @@ export const pointGamePlayers = pgTable(
 
 export const pointGamePoints = pgTable("point_game_points", {
     id: uuid("id").primaryKey().defaultRandom(),
-    pointId: integer("point_id").notNull(),
+    pointId: varchar("point_id").notNull(),
     gameId: uuid("game_id")
         .references(() => pointGame.id)
         .notNull(),

@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 
-export default function MapPageClient() {
+export default function MapPageClient({ gameId }: { gameId: string }) {
   const Map = useMemo(
     () =>
       dynamic(() => import("@/components/Map"), {
@@ -15,7 +15,7 @@ export default function MapPageClient() {
 
   return (
     <div className="max-w-4xl mx-auto w-full h-full">
-      <Map />
+      <Map gameId={gameId} />
     </div>
   );
 }

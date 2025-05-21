@@ -1,5 +1,5 @@
 export interface PointOfInterest {
-    id: number;
+    id: string;
     name: string;
     position: [number, number];
 }

@@ -29,7 +29,7 @@ interface MapRef {
   setView: (position: [number, number], zoom: number) => void;
 }
 
-export default function Map() {
+export default function Map({ gameId }: { gameId: string }) {
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [map, setMap] = useState<MapRef | null>(null);
@@ -38,7 +38,7 @@ export default function Map() {
   const { isLoading, data: pointsData } = useQuery({
     queryKey: ["points"],
     queryFn: async () => {
-      const response = await axios.get("/api/point/info");
+      const response = await axios.get(`/api/point-game/${gameId}/info`);
       return response.data.points as PointData[];
     }
   });
@@ -60,7 +60,7 @@ export default function Map() {
     }
   }, []);
 
-  const handleClaim = async (pointId: number) => {
+  const handleClaim = async (pointId: string) => {
     console.log(`Claim button clicked for ${pointId}!`);
     if (!userPosition) return;
 
@@ -123,7 +123,7 @@ function PointOfInterestMarker({
   currentUserId: string;
   userPosition: [number, number] | null;
   claimInfo: PointData | null;
-  handleClaim: (id: number) => void;
+  handleClaim: (id: string) => void;
   onDoubleClick?: (point: PointOfInterest) => void;
 }) {
   const pointDistance = userPosition

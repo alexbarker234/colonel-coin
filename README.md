@@ -23,6 +23,8 @@ Used to manage the point claim game via browser geolocation
 
 ## Packages
 
+`pnpm run dev:packages`
+
 ### Databse - Drizzle
 
 TODO - write

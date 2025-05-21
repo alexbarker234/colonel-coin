@@ -50,6 +50,13 @@
       "when": 1747648626910,
       "tag": "0006_eager_lorna_dane",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1747809230977,
+      "tag": "0007_magical_galactus",
+      "breakpoints": true
     }
   ]
 }

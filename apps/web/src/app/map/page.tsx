@@ -35,5 +35,5 @@ export default async function MapPage() {
       </div>
     );
 
-  return <MapPageClient />;
+  return <MapPageClient gameId={firstGame.id} />;
 }

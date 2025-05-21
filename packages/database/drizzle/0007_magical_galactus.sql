@@ -1,0 +1,1 @@
+ALTER TABLE "point_game_points" ALTER COLUMN "point_id" SET DATA TYPE varchar;

@@ -1,17 +1,30 @@
 import { auth } from "@/auth";
 import { getUserInfo } from "@/services/discord";
 import { PointData } from "@/types";
-import { db, pointGamePoints } from "database";
+import { db, eq, pointGame, pointGamePoints } from "database";
 import { pointsOfInterest } from "game-data";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request, { params }: { params: { gameId: string } }) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const gameId = params.gameId;
+  // Check game exists
+  const game = await db
+    .select()
+    .from(pointGame)
+    .where(eq(pointGame.id, params.gameId))
+    .limit(1)
+    .then((rows) => rows[0]);
+  if (!game) {
+    return NextResponse.json({ error: "Game not found" }, { status: 404 });
+  }
+
   // Get all points from database with their claim info
-  const pointsData = await db.select().from(pointGamePoints);
+  const pointsData = await db.select().from(pointGamePoints).where(eq(pointGamePoints.gameId, gameId));
 
   // Get all points from game-data and merge with database info
   const points = pointsOfInterest.map((point) => {

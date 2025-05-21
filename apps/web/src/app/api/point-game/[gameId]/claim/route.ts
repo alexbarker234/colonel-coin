@@ -1,18 +1,30 @@
 import { auth } from "@/auth";
 import { calculateDistance } from "@/utils/mapUtils";
-import { and, db, eq, gt, pointGamePoints, users } from "database";
+import { and, db, eq, gt, pointGame, pointGamePoints, users } from "database";
 import { pointsOfInterest } from "game-data";
 import { NextResponse } from "next/server";
 
 // TODO put this in a constants file or something
 const distanceThreshold = 0.25;
 
-export async function POST(request: Request) {
+export async function POST(request: Request, { params }: { params: { gameId: string } }) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Check game exists
+  const game = await db
+    .select()
+    .from(pointGame)
+    .where(eq(pointGame.id, params.gameId))
+    .limit(1)
+    .then((rows) => rows[0]);
+  if (!game) {
+    return NextResponse.json({ error: "Game not found" }, { status: 404 });
+  }
+
+  // Check user
   const user = await db
     .select()
     .from(users)
@@ -25,16 +37,23 @@ export async function POST(request: Request) {
   }
 
   const { longitude, latitude, pointId } = await request.json();
-  if (longitude === undefined || latitude === undefined || pointId === undefined) {
-    return NextResponse.json({ error: "Missing coordinates or point ID" }, { status: 400 });
-  }
+  const gameId = params.gameId;
+
+  if (!pointId) return NextResponse.json({ error: "Missing pointId" }, { status: 400 });
+  if (!longitude || !latitude) return NextResponse.json({ error: "Missing longitude/latitude" }, { status: 400 });
 
   // Check if point was claimed in last 2 days
   const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
   const recentlyClaimed = await db
     .select()
     .from(pointGamePoints)
-    .where(and(gt(pointGamePoints.claimedAt, twoDaysAgo), eq(pointGamePoints.pointId, pointId)))
+    .where(
+      and(
+        gt(pointGamePoints.claimedAt, twoDaysAgo),
+        eq(pointGamePoints.pointId, pointId),
+        eq(pointGamePoints.gameId, gameId)
+      )
+    )
     .limit(1)
     .then((rows) => rows[0]);
 
@@ -59,7 +78,7 @@ export async function POST(request: Request) {
     .insert(pointGamePoints)
     .values({
       pointId,
-      gameId: "43fff20c-3a92-4f54-ba7a-6b07eec07ff0", // TODO
+      gameId,
       claimedByUserId: user.id,
       claimedAt: new Date()
     })
