@@ -3,6 +3,7 @@ import { calculateDistance } from "@/utils/mapUtils";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { PointOfInterest, pointsOfInterest } from "game-data";
+import { divIcon } from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet/dist/leaflet.css";
@@ -94,7 +95,6 @@ export default function Map({ gameId }: { gameId: string }) {
     if (!map) return;
     map.setView(point.position, 15);
   };
-  console.log(userPosition);
 
   return (
     <div className="h-full relative">
@@ -110,7 +110,16 @@ export default function Map({ gameId }: { gameId: string }) {
         <LocationInfo positionStatus={positionStatus} />
 
         {userPosition && (
-          <Marker position={userPosition} icon={customIcons.markerGreen}>
+          <Marker
+            position={userPosition}
+            // i dont like this
+            icon={divIcon({
+              className: "custom-div-icon",
+              html: `<div style="background-color: red; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white;"></div>`,
+              iconSize: [16, 16],
+              iconAnchor: [8, 8]
+            })}
+          >
             <Popup>Your Current Location</Popup>
           </Marker>
         )}
