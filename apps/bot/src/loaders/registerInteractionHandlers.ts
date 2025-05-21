@@ -10,14 +10,15 @@ export default (client: Client) => {
     const path = join(rootDir, "interactionHandlers");
     const handlerFiles = fs.readdirSync(path).filter((file) => file.endsWith(".ts"));
 
+    console.log("Registering interaction handlers:");
     for (const handlerFile of handlerFiles) {
         const handler: InteractionHandler = require(`${path}/${handlerFile}`).default;
         if (!handler.customId) {
-            console.log(`[WARNING] The interaction handler at ${handlerFile} is missing required "customId" field`);
+            console.log(`- [WARNING] The interaction handler at ${handlerFile} is missing required "customId" field`);
             return;
         }
 
         client.interactionHandlers.set(handler.customId, handler);
-        console.log(`Registered interaction handler: ${handler.customId}`);
+        console.log(`- ${handler.customId}`);
     }
 };

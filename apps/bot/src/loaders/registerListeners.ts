@@ -10,9 +10,10 @@ export default (client: Client) => {
 
     const path = join(rootDir, "events");
     const eventFiles = fs.readdirSync(path);
+    console.log("Registering event listeners:");
     for (const eventFile of eventFiles) {
         const event: EventHandler = require(join(path, eventFile)).default;
         client.on(event.name as string, event.execute.bind(null, client));
-        console.log(`Registered event listener: ${event.name}`);
+        console.log(`- ${event.name}`);
     }
 };

@@ -2,7 +2,7 @@ import { InteractionHandler } from "@/types";
 import { EmbedBuilder, MessageFlags } from "discord.js";
 
 export default {
-    customId: "point-game-info",
+    customId: "point_game_info",
     execute: async (interaction) => {
         if (!interaction.isButton()) return;
         const embed = new EmbedBuilder()

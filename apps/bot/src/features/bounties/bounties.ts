@@ -12,8 +12,8 @@ export const logBountyInformation = () => {
     console.log(`Bounty Statistics:
 - Total Bounties: ${totalBounties}
 - Non-Wildcard Bounties: ${nonWildcardBounties}
-- Regular Bounties: ${regularBounties}
-- Negative Bounties: ${negativeBounties}
+  - Regular Bounties: ${regularBounties}
+  - Negative Bounties: ${negativeBounties}
 - Wildcard Bounties: ${wildcardBounties}`);
 };
 

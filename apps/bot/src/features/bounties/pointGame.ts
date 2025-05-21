@@ -57,7 +57,7 @@ export async function createPointGame(client: Client, channel: Channel) {
         .setStyle(ButtonStyle.Link);
 
     const infoButton = new ButtonBuilder()
-        .setCustomId("point-game-info")
+        .setCustomId("point_game_info")
         .setLabel("Info")
         .setStyle(ButtonStyle.Primary)
         .setEmoji("\u2139");

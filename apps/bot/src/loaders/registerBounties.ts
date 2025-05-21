@@ -10,14 +10,15 @@ export default (client: Client) => {
     const path = join(rootDir, "bounties");
     const bountyFiles = fs.readdirSync(path).filter((file) => file.endsWith(".ts") && file !== "README.md");
 
+    console.log("Registering bounties:");
     for (const bountyFile of bountyFiles) {
         const bounty: BountyHandler = require(`${path}/${bountyFile}`).default;
         if (!bounty.id) {
-            console.log(`[WARNING] The bounty at ${bountyFile} is missing required "id" field`);
+            console.log(`- [WARNING] The bounty at ${bountyFile} is missing required "id" field`);
             return;
         }
 
         client.bounties.set(bounty.id, bounty);
-        console.log(`Registered bounty: ${bountyFile} with id ${bounty.id}`);
+        console.log(`- ${bountyFile} with id ${bounty.id}`);
     }
 };
