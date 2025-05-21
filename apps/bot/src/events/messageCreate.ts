@@ -1,5 +1,5 @@
 import { EventHandler } from "@/types";
-import { getUser } from "@/utils/user";
+import { getUser } from "@/utils/userUtils";
 import { Client, Events, Message } from "discord.js";
 
 export default {

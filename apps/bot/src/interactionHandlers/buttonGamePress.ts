@@ -1,5 +1,5 @@
+import { handleButtonPress } from "@/features/bounties/buttonGame";
 import { InteractionHandler } from "@/types";
-import { handleButtonPress } from "@/utils/buttonGame";
 
 export default {
     customId: "button_game",

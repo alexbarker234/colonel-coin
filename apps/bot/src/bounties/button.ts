@@ -1,5 +1,5 @@
+import { createButtonGame } from "@/features/bounties/buttonGame";
 import { BountyHandler } from "@/types";
-import { createButtonGame } from "@/utils/buttonGame";
 import { getGamesChannel } from "@/utils/miscUtils";
 
 export default {

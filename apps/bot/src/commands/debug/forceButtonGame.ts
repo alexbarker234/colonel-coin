@@ -1,5 +1,5 @@
+import { createButtonGame } from "@/features/bounties/buttonGame";
 import { SlashCommandHandler } from "@/types";
-import { createButtonGame } from "@/utils/buttonGame";
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 export default {

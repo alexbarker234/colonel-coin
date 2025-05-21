@@ -12,11 +12,12 @@ export default (client: Client) => {
 
     for (const bountyFile of bountyFiles) {
         const bounty: BountyHandler = require(`${path}/${bountyFile}`).default;
-        if (bounty.id) {
-            client.bounties.set(bounty.id, bounty);
-            console.log(`Registered bounty: ${bountyFile} with id ${bounty.id}`);
-        } else {
+        if (!bounty.id) {
             console.log(`[WARNING] The bounty at ${bountyFile} is missing required "id" field`);
+            return;
         }
+
+        client.bounties.set(bounty.id, bounty);
+        console.log(`Registered bounty: ${bountyFile} with id ${bounty.id}`);
     }
 };

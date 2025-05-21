@@ -8,7 +8,7 @@ import {
     Client,
     EmbedBuilder
 } from "discord.js";
-import { getUser } from "./user";
+import { getUser } from "../../utils/userUtils";
 
 export const createButtonGame = async (client: Client, channel: Channel) => {
     if (!channel.isTextBased() || channel.isDMBased()) return;

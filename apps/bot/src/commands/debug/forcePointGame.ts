@@ -1,5 +1,5 @@
+import { createPointGame } from "@/features/bounties/pointGame";
 import { SlashCommandHandler } from "@/types";
-import { createPointGame } from "@/utils/pointGame";
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 export default {

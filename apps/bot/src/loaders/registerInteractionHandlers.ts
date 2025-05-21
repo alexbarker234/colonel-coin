@@ -12,11 +12,12 @@ export default (client: Client) => {
 
     for (const handlerFile of handlerFiles) {
         const handler: InteractionHandler = require(`${path}/${handlerFile}`).default;
-        if (handler.customId) {
-            client.interactionHandlers.set(handler.customId, handler);
-            console.log(`Registered interaction handler: ${handlerFile} with customId ${handler.customId}`);
-        } else {
+        if (!handler.customId) {
             console.log(`[WARNING] The interaction handler at ${handlerFile} is missing required "customId" field`);
+            return;
         }
+
+        client.interactionHandlers.set(handler.customId, handler);
+        console.log(`Registered interaction handler: ${handler.customId}`);
     }
 };

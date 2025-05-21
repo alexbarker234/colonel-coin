@@ -1,5 +1,5 @@
+import { updatePointGames } from "@/features/bounties/pointGame";
 import { SlashCommandHandler } from "@/types";
-import { updatePointGames } from "@/utils/pointGame";
 import { CommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 export default {

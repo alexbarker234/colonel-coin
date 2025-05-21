@@ -1,8 +1,8 @@
-import { sendBounty } from "@/utils/bounties";
-import { updateButtonGames } from "@/utils/buttonGame";
-import { deleteExpiredTokens } from "@/utils/loginTokens";
-import { updatePointGames } from "@/utils/pointGame";
-import { randomJoin } from "@/utils/voiceChannel";
+import { sendBounty } from "@/features/bounties/bounties";
+import { updateButtonGames } from "@/features/bounties/buttonGame";
+import { updatePointGames } from "@/features/bounties/pointGame";
+import { deleteExpiredTokens } from "@/features/loginTokens";
+import { randomJoin } from "@/features/voiceChannel";
 import { Client } from "discord.js";
 import cron from "node-cron";
 

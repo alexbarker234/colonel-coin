@@ -1,5 +1,5 @@
+import { chooseBounty, sendBounty } from "@/features/bounties/bounties";
 import { SlashCommandHandler } from "@/types";
-import { chooseBounty, sendBounty } from "@/utils/bounties";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 export default {

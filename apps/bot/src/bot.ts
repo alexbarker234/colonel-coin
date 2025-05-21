@@ -1,6 +1,7 @@
 // Load module augmentation for client
 import { Client } from "discord.js";
 import "./client";
+import { logBountyInformation } from "./features/bounties/bounties";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -24,5 +25,7 @@ registerListeners(client);
 registerSchedules(client);
 registerBounties(client);
 registerInteractionHandlers(client);
+
+logBountyInformation();
 
 client.login(token);

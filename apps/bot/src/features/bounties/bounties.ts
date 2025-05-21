@@ -1,15 +1,21 @@
 import { bounties, db, guildSettings, isNotNull } from "database";
 import { Client, EmbedBuilder, Guild } from "discord.js";
-import { bountyData } from "game-data";
+import { BountyData, bountyData } from "game-data";
 
-interface Bounty {
-    id: number;
-    description: string;
-    wildcard?: boolean;
-    negative?: boolean;
-    reward?: string;
-    penalty?: string;
-}
+export const logBountyInformation = () => {
+    const totalBounties = bountyData.length;
+    const regularBounties = bountyData.filter((b) => !b.wildcard && !b.negative).length;
+    const nonWildcardBounties = bountyData.filter((b) => !b.wildcard).length;
+    const negativeBounties = bountyData.filter((b) => b.negative).length;
+    const wildcardBounties = bountyData.filter((b) => b.wildcard).length;
+
+    console.log(`Bounty Statistics:
+- Total Bounties: ${totalBounties}
+- Non-Wildcard Bounties: ${nonWildcardBounties}
+- Regular Bounties: ${regularBounties}
+- Negative Bounties: ${negativeBounties}
+- Wildcard Bounties: ${wildcardBounties}`);
+};
 
 export const sendBounty = async (client: Client, bountyId?: number, markAsUsed = true) => {
     const guilds = client.guilds.cache;
@@ -65,7 +71,7 @@ export const sendBounty = async (client: Client, bountyId?: number, markAsUsed =
     }
 };
 
-export const createBountyEmbed = (bounty: Bounty, client: Client) => {
+export const createBountyEmbed = (bounty: BountyData, client: Client) => {
     const embed = new EmbedBuilder()
         .setTitle("🎯 New Bounty!")
         .setDescription(bounty.description)
@@ -105,7 +111,7 @@ export const createBountyEmbed = (bounty: Bounty, client: Client) => {
     return embed;
 };
 
-export const chooseBounty = async (id?: number): Promise<Bounty | null> => {
+export const chooseBounty = async (id?: number): Promise<BountyData | null> => {
     // If id is specified, just load the id
     if (id) {
         const bounty = bountyData.find((b: any) => b.id === id);

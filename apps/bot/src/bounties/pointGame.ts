@@ -1,6 +1,6 @@
+import { createPointGame } from "@/features/bounties/pointGame";
 import { BountyHandler } from "@/types";
 import { getGamesChannel } from "@/utils/miscUtils";
-import { createPointGame } from "@/utils/pointGame";
 
 export default {
     id: 31,

@@ -1,5 +1,5 @@
 import { SlashCommandHandler } from "@/types";
-import { getUser } from "@/utils/user";
+import { getUser } from "@/utils/userUtils";
 import { db, eq, users } from "database";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
