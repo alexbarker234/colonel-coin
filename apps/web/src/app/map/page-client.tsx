@@ -14,7 +14,7 @@ export default function MapPageClient({ gameId }: { gameId: string }) {
   );
 
   return (
-    <div className="max-w-4xl mx-auto w-full h-full">
+    <div className="mx-auto w-full h-full">
       <Map gameId={gameId} />
     </div>
   );

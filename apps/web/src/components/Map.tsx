@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
-import { customIcons } from "./map/icons";
+import { customIcons } from "../lib/mapIcons";
 
 function MapEvents() {
   useMapEvents({
@@ -86,8 +86,14 @@ export default function Map({ gameId }: { gameId: string }) {
   console.log({ isLoading, pointsData });
 
   return (
-    <div className="h-full">
-      <MapContainer center={defaultPosition} zoom={zoom} scrollWheelZoom={true} className="h-full w-full" ref={setMap}>
+    <div className="h-full relative">
+      <MapContainer
+        center={defaultPosition}
+        zoom={zoom}
+        scrollWheelZoom={true}
+        className="h-full w-full relative z-0"
+        ref={setMap}
+      >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <MapEvents />
         {userPosition && (
