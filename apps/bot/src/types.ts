@@ -1,5 +1,5 @@
 import { guildSettings } from "database";
-import { Client, Collection, CommandInteraction, EmbedBuilder, Guild, SlashCommandBuilder } from "discord.js";
+import { Client, CommandInteraction, EmbedBuilder, Guild, SlashCommandBuilder } from "discord.js";
 
 export type GuildSettings = typeof guildSettings.$inferSelect;
 
@@ -14,11 +14,4 @@ export interface Bounty {
     id: number;
     modifyEmbed?: (embed: EmbedBuilder) => void;
     postSendBounty?: (client: Client, guild: Guild, settings: GuildSettings) => void;
-}
-
-declare module "discord.js" {
-    export interface Client {
-        commands: Collection<string, SlashCommand>;
-        bounties: Collection<number, Bounty>;
-    }
 }

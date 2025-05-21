@@ -1,4 +1,7 @@
+// Load module augmentation for client
 import { Client } from "discord.js";
+import "./client";
+
 import dotenv from "dotenv";
 dotenv.config();
 

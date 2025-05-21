@@ -1,4 +1,4 @@
-import { db, eq, pointGame, pointGamePlayers, users } from "database";
+import { db, eq, pointGame, pointGamePlayers, pointGamePoints, users } from "database";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder } from "discord.js";
 
 export async function createPointGame(client: Client, channel: Channel) {
@@ -24,6 +24,7 @@ export async function createPointGame(client: Client, channel: Channel) {
     if (existingGame) {
         await channel.send({ content: "There's already a game in this server, deleting old game!" });
         try {
+            await db.delete(pointGamePoints).where(eq(pointGamePoints.gameId, existingGame.id));
             await db.delete(pointGamePlayers).where(eq(pointGamePlayers.gameId, existingGame.id));
             await db.delete(pointGame).where(eq(pointGame.id, existingGame.id));
         } catch (error) {
