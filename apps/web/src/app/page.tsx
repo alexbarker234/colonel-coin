@@ -34,7 +34,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center h-full">
       <WelcomeMessage />
       {/* Games */}
-      <GameCard title="Point Claim Game" icon={<FaMap />} href="/map" />
+      <GameCard title="Map Rush Game" icon={<FaMap />} href="/map" />
     </div>
   );
 }
