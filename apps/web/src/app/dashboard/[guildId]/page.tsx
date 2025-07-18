@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import GuildIcon from "@/components/GuildIcon";
 import { getGuildInfo } from "@/services/discord";
-import { db, eq, userGuilds } from "database";
+import { and, db, eq, userGuilds } from "database";
 import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -11,9 +11,16 @@ interface DashboardGuildPageProps {
   params: Promise<{ guildId: string }>;
 }
 
-const getCachedUserGuilds = unstable_cache(
-  async (guildId: string) => {
-    return await db.select().from(userGuilds).where(eq(userGuilds.guildId, guildId));
+const getThisUserGuild = unstable_cache(
+  async (guildId: string, userId: string) => {
+    return (
+      (
+        await db
+          .select()
+          .from(userGuilds)
+          .where(and(eq(userGuilds.guildId, guildId), eq(userGuilds.userId, userId)))
+      )[0] || null
+    );
   },
   ["user-guilds"],
   {
@@ -29,8 +36,8 @@ export default async function DashboardGuildPage({ params }: DashboardGuildPageP
   if (!session?.user?.id) redirect("/");
 
   // If the user is not in the guild
-  const userGuildsData = await getCachedUserGuilds(guildId);
-  if (!userGuildsData.some((guild) => guild.guildId === guildId)) {
+  const userGuildData = await getThisUserGuild(guildId, session.user.id);
+  if (!userGuildData) {
     notFound();
   }
 
@@ -46,11 +53,14 @@ export default async function DashboardGuildPage({ params }: DashboardGuildPageP
           <FaChevronLeft className="mr-2" />
           Back to dashboard
         </Link>
-        <div className="flex items-center mb-4">
-          <GuildIcon iconURL={guildInfo.iconURL} name={guildInfo.name} className="mr-2" />
-          <h1 className="text-3xl font-bold text-white">{guildInfo.name}</h1>
-        </div>
         <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-700">
+          <div className="flex items-center mb-4">
+            <GuildIcon iconURL={guildInfo.iconURL} name={guildInfo.name} className="mr-2" />
+            <h1 className="text-3xl font-bold text-white">{guildInfo.name}</h1>
+          </div>
+          <p className="text-sm text-gray-300">Your balance: {userGuildData.balance.toLocaleString()} coins</p>
+        </div>
+        <div className="mt-4">
           <p className="text-lg text-gray-300">
             <span className="font-semibold text-white">Guild ID:</span> {guildInfo.name}
           </p>
