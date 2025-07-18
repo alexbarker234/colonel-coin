@@ -2,6 +2,7 @@
     "$schema": "https://railway.app/railway.schema.json",
     "build": {
         "builder": "NIXPACKS",
+        "nixpacksConfigPath": "nixpacks.toml",
         "watchPatterns": ["/apps/bot", "/packages/database", "/package.json"],
         "buildCommand": "pnpm run build --filter database"
     },
