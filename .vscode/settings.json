@@ -3,5 +3,8 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": "always"
     },
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+    "files.associations": {
+        "*.css": "postcss"
+    }
 }

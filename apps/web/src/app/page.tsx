@@ -21,7 +21,7 @@ export default function Home() {
         <WelcomeMessage />
         <button
           onClick={() => (window.location.href = "discord://discordapp.com")}
-          className="flex items-center gap-2 px-6 py-3 bg-[#5865F2] text-white rounded-lg hover:bg-[#4752C4] transition-colors cursor-pointer"
+          className="flex items-center gap-2 px-6 py-3 bg-discord-blue text-white rounded-lg hover:bg-discord-blue-dark transition-colors cursor-pointer"
         >
           <FaDiscord size={24} />
           Login with the Discord Bot
