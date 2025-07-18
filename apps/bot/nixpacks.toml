@@ -1,11 +1,2 @@
 [phases.setup]
 nixPkgs = ["...", "ffmpeg"]
-
-[phases.install]
-cmds = ["pnpm install"]
-
-[phases.build]
-cmds = ["pnpm run build --filter database"]
-
-[start]
-cmd = "pnpm run start --filter bot" 
