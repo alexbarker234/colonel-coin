@@ -1,7 +1,10 @@
 import { auth } from "@/auth";
+import { getGuildInfo } from "@/services/discord";
 import { db, eq, userGuilds } from "database";
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { FaChevronRight, FaUsers } from "react-icons/fa";
+
 export default async function DashboardPage() {
   const session = await auth();
 
@@ -12,6 +15,19 @@ export default async function DashboardPage() {
   // Fetch all guilds the user is in
   const userGuildsData = await db.select().from(userGuilds).where(eq(userGuilds.userId, session.user.id));
 
+  // Fetch guild information for each guild
+  const guildsWithInfo = await Promise.all(
+    userGuildsData.map(async (guild) => {
+      try {
+        const guildInfo = await getGuildInfo(guild.guildId);
+        return { ...guild, guildInfo };
+      } catch (error) {
+        console.error(`Failed to fetch guild info for ${guild.guildId}:`, error);
+        return { ...guild, guildInfo: null };
+      }
+    })
+  );
+
   return (
     <div className="pt-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -20,7 +36,7 @@ export default async function DashboardPage() {
           <p className="mt-2 text-gray-300">Your servers and balances</p>
         </div>
 
-        {userGuildsData.length === 0 ? (
+        {guildsWithInfo.length === 0 ? (
           <div className="text-center py-12">
             <div className="mx-auto h-12 w-12 text-gray-400">
               <FaUsers className="h-12 w-12" />
@@ -30,7 +46,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {userGuildsData.map((guild) => (
+            {guildsWithInfo.map((guild) => (
               <div
                 key={guild.guildId}
                 className="bg-zinc-900 overflow-hidden shadow rounded-lg border border-zinc-700 hover:shadow-md transition-shadow"
@@ -38,13 +54,28 @@ export default async function DashboardPage() {
                 <div className="p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
-                        <FaUsers className="w-6 h-6 text-white" />
-                      </div>
+                      {guild.guildInfo?.iconURL ? (
+                        <Image
+                          src={guild.guildInfo.iconURL}
+                          alt={`${guild.guildInfo.name} icon`}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
+                          <FaUsers className="w-6 h-6 text-white" />
+                        </div>
+                      )}
                     </div>
                     <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-medium text-white truncate">Guild {guild.guildId}</h3>
+                      <h3 className="text-lg font-medium text-white truncate">
+                        {guild.guildInfo?.name || `Guild ${guild.guildId}`}
+                      </h3>
                       <p className="text-sm text-gray-300">Balance: {guild.balance.toLocaleString()} coins</p>
+                      {guild.guildInfo?.memberCount && (
+                        <p className="text-xs text-gray-400">{guild.guildInfo.memberCount} members</p>
+                      )}
                     </div>
                   </div>
 
