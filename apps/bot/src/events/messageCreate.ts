@@ -7,6 +7,6 @@ export default {
     execute: async (client: Client, message: Message) => {
         if (message.author.bot) return;
 
-        const user = await getUser(message.author.id);
+        const user = await getUser(message.author.id, message.guild?.id);
     }
 } satisfies EventHandler;

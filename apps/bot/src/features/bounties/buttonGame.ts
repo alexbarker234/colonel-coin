@@ -57,7 +57,7 @@ export const createButtonGame = async (client: Client, channel: Channel) => {
 
 export const handleButtonPress = async (interaction: ButtonInteraction) => {
     try {
-        await getUser(interaction.user.id);
+        await getUser(interaction.user.id, interaction.guild?.id);
 
         // Get the game data from the database
         const games = await db

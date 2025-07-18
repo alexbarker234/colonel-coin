@@ -1,4 +1,5 @@
-import { and, db, desc, eq, isNotNull, pointGame, pointGamePlayers, pointGamePoints, sql, users } from "database";
+import { getUser } from "@/utils/userUtils";
+import { and, db, desc, eq, isNotNull, pointGame, pointGamePlayers, pointGamePoints, sql } from "database";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder } from "discord.js";
 import { pointsOfInterest } from "game-data";
 
@@ -81,14 +82,7 @@ export async function createPointGame(client: Client, channel: Channel) {
 
     // For each user in the server, add them to the game
     for (const [userId, user] of members) {
-        // Ensure user exists in database
-        await db
-            .insert(users)
-            .values({
-                id: userId,
-                balance: 0
-            })
-            .onConflictDoNothing();
+        await getUser(userId, channel.guild.id);
 
         // Add them to the game
         await db.insert(pointGamePlayers).values({

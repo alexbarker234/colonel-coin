@@ -1,6 +1,6 @@
 import { SlashCommandHandler } from "@/types";
 import { getUser } from "@/utils/userUtils";
-import { db, eq, users } from "database";
+import { and, db, eq, userGuilds } from "database";
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from "discord.js";
 
 export default {
@@ -21,10 +21,24 @@ export default {
             return;
         }
 
-        // ensure user exists
-        await getUser(interaction.user.id);
+        const guildId = interaction.guild?.id;
+        const userId = interaction.user.id;
 
-        await db.update(users).set({ balance: amount }).where(eq(users.id, interaction.user.id));
+        if (!guildId || !userId) {
+            await interaction.reply({
+                content: "This command can only be used in a server!",
+                flags: MessageFlags.Ephemeral
+            });
+            return;
+        }
+
+        // ensure user exists
+        await getUser(userId, guildId);
+
+        await db
+            .update(userGuilds)
+            .set({ balance: amount })
+            .where(and(eq(userGuilds.userId, userId), eq(userGuilds.guildId, guildId)));
 
         await interaction.reply({
             content: `Successfully updated your balance to ${amount}!`,

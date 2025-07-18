@@ -2,8 +2,19 @@ import { integer, pgTable, primaryKey, timestamp, uuid, varchar } from "drizzle-
 
 export const users = pgTable("users", {
     id: varchar("id").primaryKey(),
-    balance: integer("balance").notNull().default(0),
 });
+
+export const userGuilds = pgTable(
+    "user_guilds",
+    {
+        userId: varchar("user_id")
+            .references(() => users.id)
+            .notNull(),
+        guildId: varchar("guild_id").notNull(),
+        balance: integer("balance").notNull().default(0),
+    },
+    (table) => [primaryKey({ columns: [table.userId, table.guildId] })]
+);
 
 // Login tokens table for logging into website via URL sent on Discord
 export const loginTokens = pgTable("login_tokens", {
