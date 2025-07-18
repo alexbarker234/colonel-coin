@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
+import GuildIcon from "@/components/GuildIcon";
 import { getGuildInfo } from "@/services/discord";
 import { db, eq, userGuilds } from "database";
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { FaChevronRight, FaUsers } from "react-icons/fa";
 
@@ -54,19 +54,7 @@ export default async function DashboardPage() {
                 <div className="p-6">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      {guild.guildInfo?.iconURL ? (
-                        <Image
-                          src={guild.guildInfo.iconURL}
-                          alt={`${guild.guildInfo.name} icon`}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 rounded-lg"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center">
-                          <FaUsers className="w-6 h-6 text-white" />
-                        </div>
-                      )}
+                      <GuildIcon iconURL={guild.guildInfo?.iconURL} name={guild.guildInfo?.name || ""} />
                     </div>
                     <div className="ml-4 flex-1">
                       <h3 className="text-lg font-medium text-white truncate">

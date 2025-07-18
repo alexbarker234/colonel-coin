@@ -39,7 +39,7 @@ function ProfileMenuItem({ href, onClick, children, icon: Icon }: MenuItemProps)
 export default function UserProfile({ userInfo }: { userInfo: { username: string; avatarURL: string } }) {
   return (
     <Menu as="div" className="relative inline-block text-left h-full">
-      <MenuButton className="flex items-center gap-2 bg-neutral-800 rounded-full px-1 md:px-2 py-1 cursor-pointer h-full hover:bg-neutral-700 transition-colors focus:outline-none">
+      <MenuButton className="flex items-center gap-2 bg-zinc-800 rounded-full px-1 md:px-2 py-1 cursor-pointer h-full hover:bg-zinc-700 transition-colors focus:outline-none">
         <Image
           src={userInfo.avatarURL}
           alt={userInfo.username}
@@ -59,7 +59,7 @@ export default function UserProfile({ userInfo }: { userInfo: { username: string
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 mt-2 w-32 bg-neutral-800 rounded-lg shadow-lg font-bold focus:outline-none">
+        <MenuItems className="absolute right-0 mt-2 w-32 bg-zinc-800 rounded-lg shadow-lg font-bold focus:outline-none">
           <MenuItem>
             {() => (
               <ProfileMenuItem href="/" icon={FaHome}>
