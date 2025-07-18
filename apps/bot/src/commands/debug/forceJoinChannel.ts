@@ -1,8 +1,8 @@
-import BotClient from "@/structures/BotClient";
-import { randomJoin } from "@/utils/voiceChannel";
+import { randomJoin } from "@/features/voiceChannel";
+import { SlashCommandHandler } from "@/types";
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName("forcejoinchannel")
         .setDescription("Force a the bot to join a channel and play audio"),
@@ -13,7 +13,7 @@ module.exports = {
             return;
         }
 
-        await randomJoin(interaction.client as BotClient, 1);
+        await randomJoin(interaction.client, 1);
         interaction.reply({ content: "Bot joined channel and playing audio!", ephemeral: true });
     }
-};
+} satisfies SlashCommandHandler;
