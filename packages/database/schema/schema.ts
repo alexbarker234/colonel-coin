@@ -4,13 +4,19 @@ export const users = pgTable("users", {
     id: varchar("id").primaryKey(),
 });
 
+export const guilds = pgTable("guilds", {
+    id: varchar("id").primaryKey(),
+});
+
 export const userGuilds = pgTable(
     "user_guilds",
     {
         userId: varchar("user_id")
             .references(() => users.id)
             .notNull(),
-        guildId: varchar("guild_id").notNull(),
+        guildId: varchar("guild_id")
+            .references(() => guilds.id)
+            .notNull(),
         balance: integer("balance").notNull().default(0),
     },
     (table) => [primaryKey({ columns: [table.userId, table.guildId] })]
@@ -53,7 +59,9 @@ export const bountySchedule = pgTable("bounty_schedule", {
 
 // Guild settings table
 export const guildSettings = pgTable("guild_settings", {
-    id: varchar("id").primaryKey(),
+    id: varchar("id")
+        .primaryKey()
+        .references(() => guilds.id),
     bountiesChannelId: varchar("bounties_channel_id"),
     gamesChannelId: varchar("games_channel_id"),
 });

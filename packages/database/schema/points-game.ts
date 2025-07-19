@@ -1,5 +1,16 @@
-import { integer, pgTable, primaryKey, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { users } from "./schema";
+import { decimal, integer, pgTable, primaryKey, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { guilds, users } from "./schema";
+
+// Each guild has a customisable list of points of interest
+export const pointsOfInterest = pgTable("points_of_interest", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: varchar("name").notNull(),
+    guildId: varchar("guild_id")
+        .references(() => guilds.id)
+        .notNull(),
+    latitude: decimal("latitude").notNull(),
+    longitude: decimal("longitude").notNull(),
+});
 
 export const pointGame = pgTable("point_game", {
     id: uuid("id").primaryKey().defaultRandom(),

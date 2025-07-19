@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import GuildIcon from "@/components/GuildIcon";
+import PointsEditor from "@/components/PointsEditor";
 import { getGuildInfo } from "@/services/discord";
 import { and, db, eq, userGuilds } from "database";
 import { unstable_cache } from "next/cache";
@@ -60,10 +61,8 @@ export default async function DashboardGuildPage({ params }: DashboardGuildPageP
           </div>
           <p className="text-sm text-gray-300">Your balance: {userGuildData.balance.toLocaleString()} coins</p>
         </div>
-        <div className="mt-4">
-          <p className="text-lg text-gray-300">
-            <span className="font-semibold text-white">Guild ID:</span> {guildInfo.name}
-          </p>
+        <div className="mt-6">
+          <PointsEditor guildId={guildId} />
         </div>
       </div>
     </div>

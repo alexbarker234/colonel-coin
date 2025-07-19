@@ -1,0 +1,17 @@
+{
+    "name": "core",
+    "version": "0.0.0",
+    "private": true,
+    "main": "index.ts",
+    "scripts": {
+        "dev": "tsc --watch",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "database": "workspace:*",
+        "game-data": "workspace:*"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.3"
+    }
+}
