@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FaMapMarkerAlt, FaPlus, FaTrash } from "react-icons/fa";
 import { useDeletePoint, useGetPoints, useResetPoints } from "../../hooks/editPoints";
-import NewPointForm from "./NewPointForm";
+import PointForm from "./PointForm";
 
 interface PointsEditorProps {
   guildId: string;
@@ -73,11 +73,7 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
       )}
 
       {showAddForm && (
-        <NewPointForm
-          guildId={guildId}
-          onCancel={() => setShowAddForm(false)}
-          onSuccess={() => setShowAddForm(false)}
-        />
+        <PointForm guildId={guildId} onCancel={() => setShowAddForm(false)} onSuccess={() => setShowAddForm(false)} />
       )}
 
       {points.length === 0 ? (

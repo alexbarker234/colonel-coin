@@ -1,29 +1,25 @@
 "use client";
 
-import { divIcon } from "leaflet";
-import "leaflet-defaulticon-compatibility";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import "leaflet/dist/leaflet.css";
+import dynamic from "next/dynamic";
 import { useState } from "react";
-import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import { useAddPoint } from "../../hooks/editPoints";
 
-interface NewPointFormProps {
+const MapComponent = dynamic(() => import("./PointFormMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-64 w-full rounded-lg overflow-hidden border border-zinc-600 bg-zinc-700 flex items-center justify-center">
+      <div className="text-gray-400">Loading map...</div>
+    </div>
+  )
+});
+
+interface PointFormProps {
   guildId: string;
   onCancel: () => void;
   onSuccess: () => void;
 }
 
-function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click: (e) => {
-      onMapClick(e.latlng.lat, e.latlng.lng);
-    }
-  });
-  return null;
-}
-
-export default function NewPointForm({ guildId, onCancel, onSuccess }: NewPointFormProps) {
+export default function PointForm({ guildId, onCancel, onSuccess }: PointFormProps) {
   const [newPoint, setNewPoint] = useState({
     name: "",
     latitude: "",
@@ -35,8 +31,8 @@ export default function NewPointForm({ guildId, onCancel, onSuccess }: NewPointF
   const handleMapClick = (lat: number, lng: number) => {
     setNewPoint({
       ...newPoint,
-      latitude: lat.toString(),
-      longitude: lng.toString()
+      latitude: lat.toFixed(6),
+      longitude: lng.toFixed(6)
     });
   };
 
@@ -64,9 +60,6 @@ export default function NewPointForm({ guildId, onCancel, onSuccess }: NewPointF
     onSuccess();
   };
 
-  const defaultPosition: [number, number] = [-31.957139, 115.807917];
-  const zoom = 13;
-
   return (
     <form onSubmit={handleAddPoint} className="mb-6 p-4 bg-zinc-800 rounded-lg border border-zinc-600">
       <h3 className="text-lg font-medium text-white mb-4">Add New Point</h3>
@@ -74,24 +67,7 @@ export default function NewPointForm({ guildId, onCancel, onSuccess }: NewPointF
       {/* Map Section */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-300 mb-2">Click on the map to set coordinates</label>
-        <div className="h-64 w-full rounded-lg overflow-hidden border border-zinc-600">
-          <MapContainer center={defaultPosition} zoom={zoom} scrollWheelZoom={true} className="h-full w-full">
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <MapClickHandler onMapClick={handleMapClick} />
-
-            {newPoint.latitude && newPoint.longitude && (
-              <Marker
-                position={[parseFloat(newPoint.latitude), parseFloat(newPoint.longitude)]}
-                icon={divIcon({
-                  className: "custom-div-icon",
-                  html: `<div style="background-color: #10b981; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
-                  iconSize: [20, 20],
-                  iconAnchor: [10, 10]
-                })}
-              />
-            )}
-          </MapContainer>
-        </div>
+        <MapComponent onMapClick={handleMapClick} selectedLat={newPoint.latitude} selectedLng={newPoint.longitude} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
