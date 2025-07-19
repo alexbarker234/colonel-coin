@@ -1,17 +1,14 @@
 "use client";
 
-import { PointsOfInterest } from "database";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaMapMarkerAlt, FaPlus, FaTrash } from "react-icons/fa";
+import { useAddPoint, useDeletePoint, useGetPoints, useResetPoints } from "../hooks/editPoints";
 
 interface PointsEditorProps {
   guildId: string;
 }
 
 export default function PointsEditor({ guildId }: PointsEditorProps) {
-  const [points, setPoints] = useState<PointsOfInterest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newPoint, setNewPoint] = useState({
     name: "",
@@ -19,42 +16,16 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
     longitude: ""
   });
 
-  // Fetch points on component mount
-  useEffect(() => {
-    fetchPoints();
-  }, [guildId]);
-
-  const fetchPoints = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/guild/${guildId}/points`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch points");
-      }
-      const data = await response.json();
-      setPoints(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch points");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const resetPoints = async () => {
-    try {
-      const response = await fetch(`/api/guild/${guildId}/points/reset`, {
-        method: "POST"
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to reset points");
-    }
-  };
+  // Use React Query hooks
+  const { data: points = [], isLoading: loading, error } = useGetPoints(guildId);
+  const addPointMutation = useAddPoint(guildId);
+  const resetPointsMutation = useResetPoints(guildId);
+  const deletePointMutation = useDeletePoint(guildId);
 
   const handleAddPoint = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newPoint.name || !newPoint.latitude || !newPoint.longitude) {
-      setError("All fields are required");
       return;
     }
 
@@ -62,57 +33,24 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
     const lng = parseFloat(newPoint.longitude);
 
     if (isNaN(lat) || isNaN(lng)) {
-      setError("Invalid coordinates");
       return;
     }
 
-    try {
-      const response = await fetch(`/api/guild/${guildId}/points`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name: newPoint.name,
-          latitude: lat,
-          longitude: lng
-        })
-      });
+    await addPointMutation.mutateAsync({
+      name: newPoint.name,
+      latitude: lat,
+      longitude: lng
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to add point");
-      }
-
-      const addedPoint = await response.json();
-      setPoints([...points, addedPoint]);
-      setNewPoint({ name: "", latitude: "", longitude: "" });
-      setShowAddForm(false);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to add point");
-    }
+    setNewPoint({ name: "", latitude: "", longitude: "" });
+    setShowAddForm(false);
   };
 
   const handleDeletePoint = async (pointId: string) => {
     if (!confirm("Are you sure you want to delete this point?")) {
       return;
     }
-
-    try {
-      const response = await fetch(`/api/guild/${guildId}/points/${pointId}`, {
-        method: "DELETE"
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete point");
-      }
-
-      setPoints(points.filter((point) => point.id !== pointId));
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete point");
-    }
+    await deletePointMutation.mutateAsync(pointId);
   };
 
   if (loading) {
@@ -145,16 +83,23 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
           Add Point
         </button>
         <button
-          onClick={resetPoints}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+          onClick={() => resetPointsMutation.mutate()}
+          disabled={resetPointsMutation.isPending}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors disabled:opacity-50"
         >
           <FaTrash className="mr-2" />
-          Reset Points
+          {resetPointsMutation.isPending ? "Resetting..." : "Reset Points"}
         </button>
       </div>
 
-      {error && (
-        <div className="bg-red-900/20 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-4">{error}</div>
+      {(error || addPointMutation.error || resetPointsMutation.error || deletePointMutation.error) && (
+        <div className="bg-red-900/20 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-4">
+          {error?.message ||
+            addPointMutation.error?.message ||
+            resetPointsMutation.error?.message ||
+            deletePointMutation.error?.message ||
+            "An error occurred"}
+        </div>
       )}
 
       {showAddForm && (
@@ -200,16 +145,16 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
           <div className="flex gap-3 mt-4">
             <button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+              disabled={addPointMutation.isPending}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
-              Add Point
+              {addPointMutation.isPending ? "Adding..." : "Add Point"}
             </button>
             <button
               type="button"
               onClick={() => {
                 setShowAddForm(false);
                 setNewPoint({ name: "", latitude: "", longitude: "" });
-                setError(null);
               }}
               className="bg-zinc-600 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg transition-colors"
             >

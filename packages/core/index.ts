@@ -1,5 +1,5 @@
 import { db, eq, guilds } from "database";
-import { pointsOfInterest as poiTable } from "database/schema/points-game";
+import { pointOfInterest as poiTable } from "database/schema/points-game";
 import { pointsOfInterest } from "game-data";
 
 export const initialiseGuild = async (guildId: string) => {

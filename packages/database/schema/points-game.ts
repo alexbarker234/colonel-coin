@@ -2,7 +2,7 @@ import { decimal, integer, pgTable, primaryKey, timestamp, uuid, varchar } from 
 import { guilds, users } from "./schema";
 
 // Each guild has a customisable list of points of interest
-export const pointsOfInterest = pgTable("points_of_interest", {
+export const pointOfInterest = pgTable("points_of_interest", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: varchar("name").notNull(),
     guildId: varchar("guild_id")

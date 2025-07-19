@@ -1,5 +1,5 @@
 import { isUserInGuild } from "@/utils/userUtils";
-import { db, eq, pointsOfInterest } from "database";
+import { db, eq, pointOfInterest } from "database";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: Promise<{ guildId: string }> }) {
@@ -9,7 +9,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ guil
     return NextResponse.json({ error: "Access denied" }, { status: 403 });
   }
   // Get all points of interest for this guild
-  const points = await db.select().from(pointsOfInterest).where(eq(pointsOfInterest.guildId, guildId));
+  const points = await db.select().from(pointOfInterest).where(eq(pointOfInterest.guildId, guildId));
 
   return NextResponse.json(points);
 }
@@ -35,7 +35,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ gui
 
     // Insert new point of interest
     const [newPoint] = await db
-      .insert(pointsOfInterest)
+      .insert(pointOfInterest)
       .values({
         name,
         guildId,
