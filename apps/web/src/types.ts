@@ -1,4 +1,4 @@
-import { PointOfInterest } from "game-data";
+import { PointOfInterest } from "database";
 
 export type PointData = PointOfInterest & {
   claimedBy: {

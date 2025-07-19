@@ -16,6 +16,9 @@ export const pointGame = pgTable("point_game", {
     id: uuid("id").primaryKey().defaultRandom(),
     gameStartedAt: timestamp("game_started_at", { withTimezone: true }).defaultNow().notNull(),
     // Used to update a message with the latest points
+    guildId: varchar("guild_id")
+        .references(() => guilds.id)
+        .notNull(),
     channelId: varchar("channel_id").notNull(),
     messageId: varchar("message_id").notNull(),
 });
@@ -36,7 +39,9 @@ export const pointGamePlayers = pgTable(
 
 export const pointGamePoints = pgTable("point_game_points", {
     id: uuid("id").primaryKey().defaultRandom(),
-    pointId: varchar("point_id").notNull(),
+    pointId: uuid("point_id")
+        .references(() => pointOfInterest.id)
+        .notNull(),
     gameId: uuid("game_id")
         .references(() => pointGame.id)
         .notNull(),

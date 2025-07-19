@@ -2,7 +2,7 @@ import { CLAIM_COOLDOWN, DISTANCE_THRESHOLD } from "@/constants";
 import { useClaimPoint, useGetPoints } from "@/hooks/pointGame";
 import { PointData } from "@/types";
 import { calculateDistance } from "@/utils/mapUtils";
-import { PointOfInterest, pointsOfInterest } from "game-data";
+import { PointOfInterest } from "database";
 import { divIcon } from "leaflet";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
 import { customIcons } from "../lib/mapIcons";
 import PulseLoader from "./PulseLoader";
+
 function MapEvents() {
   useMapEvents({
     click: (e) => {
@@ -66,7 +67,7 @@ export default function Map({ gameId }: { gameId: string }) {
 
   const handleDoubleClick = (point: PointOfInterest) => {
     if (!map) return;
-    map.setView(point.position, 15);
+    map.setView([+point.latitude, +point.longitude], 15);
   };
 
   return (
@@ -96,7 +97,7 @@ export default function Map({ gameId }: { gameId: string }) {
             <Popup>Your Current Location</Popup>
           </Marker>
         )}
-        {pointsOfInterest.map((point) => (
+        {pointsData?.map((point) => (
           <PointOfInterestMarker
             key={point.name}
             point={point}
@@ -146,7 +147,7 @@ function PointOfInterestMarker({
   onDoubleClick?: (point: PointOfInterest) => void;
 }) {
   const pointDistance = userPosition
-    ? calculateDistance(userPosition[0], userPosition[1], point.position[0], point.position[1])
+    ? calculateDistance(userPosition[0], userPosition[1], +point.latitude, +point.longitude)
     : null;
 
   const markerIcon = claimInfo?.claimedBy
@@ -177,7 +178,7 @@ function PointOfInterestMarker({
   return (
     <Marker
       key={point.name}
-      position={point.position}
+      position={[+point.latitude, +point.longitude]}
       icon={markerIcon}
       eventHandlers={{
         dblclick: () => {

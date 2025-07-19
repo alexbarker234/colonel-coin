@@ -1,7 +1,17 @@
 import { getUser } from "@/utils/userUtils";
-import { and, db, desc, eq, isNotNull, pointGame, pointGamePlayers, pointGamePoints, sql } from "database";
+import {
+    and,
+    db,
+    desc,
+    eq,
+    isNotNull,
+    pointGame,
+    pointGamePlayers,
+    pointGamePoints,
+    pointOfInterest,
+    sql
+} from "database";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Channel, Client, EmbedBuilder } from "discord.js";
-import { pointsOfInterest } from "game-data";
 
 export async function createPointGame(client: Client, channel: Channel) {
     if (!channel.isTextBased() || channel.isDMBased()) return;
@@ -74,6 +84,7 @@ export async function createPointGame(client: Client, channel: Channel) {
     const game = await db
         .insert(pointGame)
         .values({
+            guildId: channel.guild.id,
             messageId: message.id,
             channelId: channel.id,
             gameStartedAt: new Date()
@@ -135,7 +146,7 @@ export const updatePointGames = async (client: Client) => {
                 .orderBy(desc(pointGamePlayers.score));
 
             // Get the number of claimable points
-            const claimablePointsCount = await getClaimablePointsCount(client, game.id);
+            const claimablePointsCount = await getClaimablePointsCount(client, game.id, game.guildId);
 
             // Update the embed
             const embed = message.embeds[0];
@@ -150,25 +161,26 @@ export const updatePointGames = async (client: Client) => {
     }
 };
 
-const getClaimablePointsCount = async (client: Client, gameId: string) => {
-    // Find all unavailable points from database - claimed less than 2 days ago
+const getClaimablePointsCount = async (client: Client, gameId: string, guildId: string) => {
+    // Count total points of interest for this guild
+    const totalPoints = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(pointOfInterest)
+        .where(eq(pointOfInterest.guildId, guildId))
+        .then((rows) => rows[0]?.count || 0);
+
+    // Count unavailable points (claimed less than 2 days ago)
     const unavailablePoints = await db
-        .select()
+        .select({ count: sql<number>`count(*)` })
         .from(pointGamePoints)
         .where(
             and(
                 eq(pointGamePoints.gameId, gameId),
-                and(
-                    isNotNull(pointGamePoints.claimedByUserId),
-                    sql`${pointGamePoints.claimedAt} > NOW() - INTERVAL '2 days'`
-                )
+                isNotNull(pointGamePoints.claimedByUserId),
+                sql`${pointGamePoints.claimedAt} > NOW() - INTERVAL '2 days'`
             )
-        );
+        )
+        .then((rows) => rows[0]?.count || 0);
 
-    // Filter out points that are unclaimable
-    const newPoints = pointsOfInterest.filter(
-        (point) => !unavailablePoints.some((dbPoint) => dbPoint.pointId === point.id)
-    );
-
-    return newPoints.length;
+    return totalPoints - unavailablePoints;
 };

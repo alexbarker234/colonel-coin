@@ -1,8 +1,7 @@
 import { auth } from "@/auth";
 import { CLAIM_COOLDOWN, DISTANCE_THRESHOLD } from "@/constants";
 import { calculateDistance } from "@/utils/mapUtils";
-import { and, db, eq, gt, pointGame, pointGamePoints, users } from "database";
-import { pointsOfInterest } from "game-data";
+import { and, db, eq, gt, pointGame, pointGamePoints, pointOfInterest, users } from "database";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ gameId: string }> }) {
@@ -38,7 +37,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ gam
 
   const { longitude, latitude, pointId } = await request.json();
 
+  // Validate pointId
   if (!pointId) return NextResponse.json({ error: "Missing pointId" }, { status: 400 });
+
+  const pointsOfInterest = await db.select().from(pointOfInterest).where(eq(pointOfInterest.guildId, game.guildId));
+  const point = pointsOfInterest.find((p) => p.id === pointId);
+
+  if (!point) {
+    return NextResponse.json({ error: "Point does not belong to this guild" }, { status: 400 });
+  }
+
+  // Validate longitude/latitude
   if (!longitude || !latitude) return NextResponse.json({ error: "Missing longitude/latitude" }, { status: 400 });
 
   // Check if point was claimed in last 2 days
@@ -60,14 +69,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ gam
     return NextResponse.json({ error: "The point was already claimed in the last 2 days" }, { status: 400 });
   }
 
-  // Get point data from game-data
-  const point = pointsOfInterest.find((p) => p.id === pointId);
-  if (!point) {
-    return NextResponse.json({ error: "Point not found" }, { status: 404 });
-  }
-
   // Check if the point is within the distance threshold
-  const distance = calculateDistance(point.position[0], point.position[1], longitude, latitude);
+  const distance = calculateDistance(+point.latitude, +point.longitude, longitude, latitude);
   if (distance > DISTANCE_THRESHOLD) {
     return NextResponse.json({ error: "Point is not within the distance threshold" }, { status: 400 });
   }

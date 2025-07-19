@@ -1,8 +1,7 @@
 import { auth } from "@/auth";
 import { getUserInfo } from "@/services/discord";
 import { PointData } from "@/types";
-import { db, eq, pointGame, pointGamePoints } from "database";
-import { pointsOfInterest } from "game-data";
+import { db, eq, pointGame, pointGamePoints, pointOfInterest } from "database";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: Promise<{ gameId: string }> }) {
@@ -24,10 +23,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ game
     return NextResponse.json({ error: "Game not found" }, { status: 404 });
   }
 
-  // Get all points from database with their claim info
+  const pointsOfInterest = await db.select().from(pointOfInterest).where(eq(pointOfInterest.guildId, game.guildId));
+
   const pointsData = await db.select().from(pointGamePoints).where(eq(pointGamePoints.gameId, gameId));
 
-  // Get all points from game-data and merge with database info
   const points = pointsOfInterest.map((point) => {
     const claimedPoint = pointsData.find((cp) => cp.pointId === point.id);
     return {
