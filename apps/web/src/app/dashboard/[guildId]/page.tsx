@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import GuildIcon from "@/components/GuildIcon";
-import PointsEditor from "@/components/PointsEditor";
+import PointsEditor from "@/components/PointsEditor/PointsEditor";
 import { getGuildInfo } from "@/services/discord";
 import { and, db, eq, userGuilds } from "database";
 import { unstable_cache } from "next/cache";

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { FaMapMarkerAlt, FaPlus, FaTrash } from "react-icons/fa";
-import { useAddPoint, useDeletePoint, useGetPoints, useResetPoints } from "../hooks/editPoints";
+import { useDeletePoint, useGetPoints, useResetPoints } from "../../hooks/editPoints";
+import NewPointForm from "./NewPointForm";
 
 interface PointsEditorProps {
   guildId: string;
@@ -10,41 +11,11 @@ interface PointsEditorProps {
 
 export default function PointsEditor({ guildId }: PointsEditorProps) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newPoint, setNewPoint] = useState({
-    name: "",
-    latitude: "",
-    longitude: ""
-  });
 
   // Use React Query hooks
   const { data: points = [], isLoading: loading, error } = useGetPoints(guildId);
-  const addPointMutation = useAddPoint(guildId);
   const resetPointsMutation = useResetPoints(guildId);
   const deletePointMutation = useDeletePoint(guildId);
-
-  const handleAddPoint = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newPoint.name || !newPoint.latitude || !newPoint.longitude) {
-      return;
-    }
-
-    const lat = parseFloat(newPoint.latitude);
-    const lng = parseFloat(newPoint.longitude);
-
-    if (isNaN(lat) || isNaN(lng)) {
-      return;
-    }
-
-    await addPointMutation.mutateAsync({
-      name: newPoint.name,
-      latitude: lat,
-      longitude: lng
-    });
-
-    setNewPoint({ name: "", latitude: "", longitude: "" });
-    setShowAddForm(false);
-  };
 
   const handleDeletePoint = async (pointId: string) => {
     if (!confirm("Are you sure you want to delete this point?")) {
@@ -92,10 +63,9 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
         </button>
       </div>
 
-      {(error || addPointMutation.error || resetPointsMutation.error || deletePointMutation.error) && (
+      {(error || resetPointsMutation.error || deletePointMutation.error) && (
         <div className="bg-red-900/20 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-4">
           {error?.message ||
-            addPointMutation.error?.message ||
             resetPointsMutation.error?.message ||
             deletePointMutation.error?.message ||
             "An error occurred"}
@@ -103,65 +73,11 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
       )}
 
       {showAddForm && (
-        <form onSubmit={handleAddPoint} className="mb-6 p-4 bg-zinc-800 rounded-lg border border-zinc-600">
-          <h3 className="text-lg font-medium text-white mb-4">Add New Point</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
-              <input
-                type="text"
-                value={newPoint.name}
-                onChange={(e) => setNewPoint({ ...newPoint, name: e.target.value })}
-                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Point name"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Latitude</label>
-              <input
-                type="number"
-                step="any"
-                value={newPoint.latitude}
-                onChange={(e) => setNewPoint({ ...newPoint, latitude: e.target.value })}
-                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="-31.980191"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Longitude</label>
-              <input
-                type="number"
-                step="any"
-                value={newPoint.longitude}
-                onChange={(e) => setNewPoint({ ...newPoint, longitude: e.target.value })}
-                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="115.817908"
-                required
-              />
-            </div>
-          </div>
-          <div className="flex gap-3 mt-4">
-            <button
-              type="submit"
-              disabled={addPointMutation.isPending}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-            >
-              {addPointMutation.isPending ? "Adding..." : "Add Point"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setShowAddForm(false);
-                setNewPoint({ name: "", latitude: "", longitude: "" });
-              }}
-              className="bg-zinc-600 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+        <NewPointForm
+          guildId={guildId}
+          onCancel={() => setShowAddForm(false)}
+          onSuccess={() => setShowAddForm(false)}
+        />
       )}
 
       {points.length === 0 ? (

@@ -11,7 +11,3 @@
   --color-discord-blue: var(--discord-blue);
   --color-discord-blue-dark: var(--discord-blue-dark);
 }
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
