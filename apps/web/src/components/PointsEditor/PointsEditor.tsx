@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FaMapMarkerAlt, FaPlus, FaTrash } from "react-icons/fa";
+import Button from "../../components/Button";
 import { useDeletePoint, useGetPoints, useResetPoints } from "../../hooks/editPoints";
 import PointForm from "./PointForm";
 
@@ -46,21 +47,15 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
           <FaMapMarkerAlt className="mr-2" />
           Points of Interest
         </h2>
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
-        >
-          <FaPlus className="mr-2" />
-          Add Point
-        </button>
-        <button
+        <Button label="Add Point" icon={FaPlus} onClick={() => setShowAddForm(!showAddForm)} />
+        <Button
+          label="Reset Points"
+          icon={FaTrash}
+          variant="danger"
+          loading={resetPointsMutation.isPending}
+          loadingLabel="Resetting..."
           onClick={() => resetPointsMutation.mutate()}
-          disabled={resetPointsMutation.isPending}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors disabled:opacity-50"
-        >
-          <FaTrash className="mr-2" />
-          {resetPointsMutation.isPending ? "Resetting..." : "Reset Points"}
-        </button>
+        />
       </div>
 
       {(error || resetPointsMutation.error || deletePointMutation.error) && (
@@ -98,13 +93,14 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
                   </p>
                 </div>
               </div>
-              <button
+              <Button
+                label=""
+                icon={FaTrash}
+                variant="ghost"
                 onClick={() => handleDeletePoint(point.id)}
-                className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-900/20 transition-colors"
                 title="Delete point"
-              >
-                <FaTrash />
-              </button>
+                className="p-2"
+              />
             </div>
           ))}
         </div>

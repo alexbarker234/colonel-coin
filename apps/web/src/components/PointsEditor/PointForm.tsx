@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import Button from "../../components/Button";
 import { useAddPoint } from "../../hooks/editPoints";
 
 const MapComponent = dynamic(() => import("./PointFormMap"), {
@@ -108,20 +109,14 @@ export default function PointForm({ guildId, onCancel, onSuccess }: PointFormPro
         </div>
       </div>
       <div className="flex gap-3 mt-4">
-        <button
+        <Button
+          label="Add Point"
           type="submit"
-          disabled={addPointMutation.isPending}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-        >
-          {addPointMutation.isPending ? "Adding..." : "Add Point"}
-        </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="bg-zinc-600 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg transition-colors"
-        >
-          Cancel
-        </button>
+          variant="success"
+          loading={addPointMutation.isPending}
+          loadingLabel="Adding..."
+        />
+        <Button label="Cancel" variant="secondary" onClick={onCancel} />
       </div>
     </form>
   );

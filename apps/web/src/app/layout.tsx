@@ -1,5 +1,5 @@
+import { Providers } from "@/app/providers";
 import Header from "@/components/Header";
-import { Providers } from "@/components/providers";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
