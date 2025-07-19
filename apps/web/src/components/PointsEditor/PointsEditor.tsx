@@ -13,10 +13,16 @@ interface PointsEditorProps {
 export default function PointsEditor({ guildId }: PointsEditorProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Use React Query hooks
   const { data: points = [], isLoading: loading, error } = useGetPoints(guildId);
   const resetPointsMutation = useResetPoints(guildId);
   const deletePointMutation = useDeletePoint(guildId);
+
+  const handleResetPoints = async () => {
+    if (!confirm("Are you sure you want to reset all points?")) {
+      return;
+    }
+    await resetPointsMutation.mutateAsync();
+  };
 
   const handleDeletePoint = async (pointId: string) => {
     if (!confirm("Are you sure you want to delete this point?")) {
@@ -42,20 +48,22 @@ export default function PointsEditor({ guildId }: PointsEditorProps) {
 
   return (
     <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white flex items-center">
+      <div className="flex items-center justify-between mb-6 flex-col md:flex-row">
+        <h2 className="text-xl font-semibold text-white flex items-center mb-4 md:mb-0">
           <FaMapMarkerAlt className="mr-2" />
           Points of Interest
         </h2>
-        <Button label="Add Point" icon={FaPlus} onClick={() => setShowAddForm(!showAddForm)} />
-        <Button
-          label="Reset Points"
-          icon={FaTrash}
-          variant="danger"
-          loading={resetPointsMutation.isPending}
-          loadingLabel="Resetting..."
-          onClick={() => resetPointsMutation.mutate()}
-        />
+        <div className="flex gap-3">
+          <Button label="Add Point" icon={FaPlus} onClick={() => setShowAddForm(!showAddForm)} />
+          <Button
+            label="Reset Points"
+            icon={FaTrash}
+            variant="danger"
+            loading={resetPointsMutation.isPending}
+            loadingLabel="Resetting..."
+            onClick={handleResetPoints}
+          />
+        </div>
       </div>
 
       {(error || resetPointsMutation.error || deletePointMutation.error) && (
